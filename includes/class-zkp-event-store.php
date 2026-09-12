@@ -56,7 +56,7 @@ final class ZKP_Event_Store implements EventStoreInterface {
 	 */
 	public static function maybe_create_table(): void {
 		global $wpdb;
-		$exists = $wpdb->query( 'SELECT 1 FROM ' . self::table() . ' LIMIT 1' );
+		$exists = $wpdb->query( $wpdb->prepare( 'SELECT 1 FROM %i LIMIT 1', self::table() ) );
 		if ( false === $exists ) {
 			self::create_table();
 		}
@@ -83,10 +83,10 @@ final class ZKP_Event_Store implements EventStoreInterface {
 	/**
 	 * EventStoreInterface::has().
 	 */
-	public function has( string $eventId ): bool {
+	public function has( string $event_id ): bool {
 		global $wpdb;
 		return (int) $wpdb->get_var(
-			$wpdb->prepare( 'SELECT COUNT(*) FROM ' . self::table() . ' WHERE event_id = %s', $eventId )
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE event_id = %s', self::table(), $event_id )
 		) > 0;
 	}
 
@@ -94,13 +94,14 @@ final class ZKP_Event_Store implements EventStoreInterface {
 	 * EventStoreInterface::markProcessed() — a no-op beyond the timestamp,
 	 * because claim() already inserted the row.
 	 */
-	public function markProcessed( string $eventId ): void {
+	public function markProcessed( string $event_id ): void {
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(
-				'UPDATE ' . self::table() . ' SET processed_at = %s WHERE event_id = %s AND processed_at IS NULL',
+				'UPDATE %i SET processed_at = %s WHERE event_id = %s AND processed_at IS NULL',
+				self::table(),
 				current_time( 'mysql' ),
-				$eventId
+				$event_id
 			)
 		);
 	}
@@ -113,7 +114,8 @@ final class ZKP_Event_Store implements EventStoreInterface {
 		global $wpdb;
 		return (int) $wpdb->query(
 			$wpdb->prepare(
-				'DELETE FROM ' . self::table() . ' WHERE created_at < DATE_SUB(%s, INTERVAL %d DAY)',
+				'DELETE FROM %i WHERE created_at < DATE_SUB(%s, INTERVAL %d DAY)',
+				self::table(),
 				current_time( 'mysql' ),
 				$days
 			)

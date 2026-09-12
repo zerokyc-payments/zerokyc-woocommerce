@@ -39,34 +39,34 @@ final class ZKP_Order_Service {
 				return;
 
 			case 'payment.underpaid':
-				$order = self::find_by_invoice( (string) $event->invoiceId );
+				$order = self::find_by_invoice( (string) $event->invoiceId ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 				if ( null !== $order && ! $order->is_paid() ) {
 					self::note(
 						$order,
 						sprintf(
 							/* translators: 1: paid amount, 2: asset */
 							__( 'ZeroKYC: UNDERPAID — received %1$s %2$s, less than invoiced. Order kept on-hold; resolve manually or ask the buyer to top up.', 'zerokyc-pay' ),
-							(string) ( $event->paidAmount() ?? '?' ),
-							(string) ( $event->paidAsset() ?? '' )
+							(string) ( $event->paidAmount() ?? '?' ), // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
+							(string) ( $event->paidAsset() ?? '' ) // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 						)
 					);
 				}
 				return;
 
 			case 'payment.detected':
-				$order = self::find_by_invoice( (string) $event->invoiceId );
+				$order = self::find_by_invoice( (string) $event->invoiceId ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 				if ( null !== $order ) {
 					self::note(
 						$order,
 						__( 'ZeroKYC: payment detected on-chain, awaiting confirmations.', 'zerokyc-pay' ),
-						'detected_' . $event->invoiceId
+						'detected_' . $event->invoiceId // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 					);
 				}
 				return;
 
 			case 'invoice.expired':
 			case 'invoice.canceled':
-				self::maybe_cancel( (string) $event->invoiceId );
+				self::maybe_cancel( (string) $event->invoiceId ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 				return;
 
 			default:
@@ -81,7 +81,7 @@ final class ZKP_Order_Service {
 		switch ( $invoice->status ) {
 			case InvoiceStatus::PAID:
 				if ( ! $order->is_paid() ) {
-					self::complete( $order, (string) ( $invoice->paidAsset ?? '' ), (string) ( $invoice->paidAmount ?? '' ), null );
+					self::complete( $order, (string) ( $invoice->paidAsset ?? '' ), (string) ( $invoice->paidAmount ?? '' ), null ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 				}
 				return;
 
@@ -117,9 +117,9 @@ final class ZKP_Order_Service {
 	 * (and the optional server-side double check).
 	 */
 	private static function confirm_from_event( WebhookEvent $event ): void {
-		$order = self::find_by_invoice( (string) $event->invoiceId );
+		$order = self::find_by_invoice( (string) $event->invoiceId ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 		if ( null === $order ) {
-			ZKP_Logger::alert( sprintf( 'event %s: no local order for invoice %s', $event->id, (string) $event->invoiceId ) );
+			ZKP_Logger::alert( sprintf( 'event %s: no local order for invoice %s', $event->id, (string) $event->invoiceId ) ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 			return;
 		}
 		if ( $order->is_paid() ) {
@@ -134,7 +134,7 @@ final class ZKP_Order_Service {
 		$guard = new ReplayGuard( new ZKP_Event_Store() );
 		if ( ! $guard->matchesOrder(
 			$event,
-			(string) $event->invoiceId,
+			(string) $event->invoiceId, // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 			'' !== $min_amount ? $min_amount : null,
 			'' !== $asset ? $asset : null
 		) ) {
@@ -150,7 +150,7 @@ final class ZKP_Order_Service {
 
 		if ( 'yes' === ( $settings['double_check'] ?? 'yes' ) ) {
 			try {
-				$invoice = ZKP_Gateway::sdk()->getInvoice( (string) $event->invoiceId );
+				$invoice = ZKP_Gateway::sdk()->getInvoice( (string) $event->invoiceId ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 			} catch ( ZeroKYC\Exception\ZeroKYCException $e ) {
 				ZKP_Logger::alert(
 					sprintf( 'event %s: double-check fetch failed (%s) — order %d left on-hold', $event->id, $e->getMessage(), $order->get_id() )
@@ -159,7 +159,7 @@ final class ZKP_Order_Service {
 			}
 			if ( ! $invoice->isPaid() ) {
 				ZKP_Logger::alert(
-					sprintf( 'event %s: invoice %s not confirmed server-side — order %d left on-hold', $event->id, (string) $event->invoiceId, $order->get_id() )
+					sprintf( 'event %s: invoice %s not confirmed server-side — order %d left on-hold', $event->id, (string) $event->invoiceId, $order->get_id() ) // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 				);
 				return;
 			}
@@ -172,7 +172,7 @@ final class ZKP_Order_Service {
 			$txid = $event->data['tx_hash'];
 		}
 
-		self::complete( $order, (string) ( $event->paidAsset() ?? '' ), (string) ( $event->paidAmount() ?? '' ), $txid );
+		self::complete( $order, (string) ( $event->paidAsset() ?? '' ), (string) ( $event->paidAmount() ?? '' ), $txid ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 	}
 
 	/**

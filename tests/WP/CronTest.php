@@ -37,8 +37,8 @@ class CronTest extends WP_UnitTestCase {
 
 	public function test_add_schedule_registers_interval(): void {
 		$schedules = ZKP_Cron::add_schedule( array() );
-		$this->assertArrayHasKey( 'zkp_15min', $schedules );
-		$this->assertSame( 15 * MINUTE_IN_SECONDS, $schedules['zkp_15min']['interval'] );
+		$this->assertArrayHasKey( 'zerokyc_15min', $schedules );
+		$this->assertSame( 15 * MINUTE_IN_SECONDS, $schedules['zerokyc_15min']['interval'] );
 	}
 
 	public function test_ensure_schedule_schedules_when_enabled(): void {

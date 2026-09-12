@@ -31,14 +31,14 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 	 * choose at checkout.
 	 */
 	public const PAYMENT_CURRENCIES = array(
-		'any'        => 'Let the buyer choose (USDT, USDC, BTC, XMR, TON)',
-		'USDT_TRON'  => 'USDT (TRC-20)',
-		'USDC_POLYGON' => 'USDC (Polygon)',
+		'any'           => 'Let the buyer choose (USDT, USDC, BTC, XMR, TON)',
+		'USDT_TRON'     => 'USDT (TRC-20)',
+		'USDC_POLYGON'  => 'USDC (Polygon)',
 		'USDC_ARBITRUM' => 'USDC (Arbitrum)',
-		'USDT_POLYGON' => 'USDT (Polygon)',
+		'USDT_POLYGON'  => 'USDT (Polygon)',
 		'USDT_ARBITRUM' => 'USDT (Arbitrum)',
-		'TON'        => 'TON',
-		'USDT_TON'   => 'USDT (TON)',
+		'TON'           => 'TON',
+		'USDT_TON'      => 'USDT (TON)',
 	);
 
 	public function __construct() {
@@ -106,7 +106,10 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 				'title'             => __( 'Invoice lifetime (minutes)', 'zerokyc-pay' ),
 				'type'              => 'number',
 				'default'           => 360,
-				'custom_attributes' => array( 'min' => 10, 'max' => 4320 ),
+				'custom_attributes' => array(
+					'min' => 10,
+					'max' => 4320,
+				),
 				'description'       => __( 'How long the invoice stays payable (10–4320).', 'zerokyc-pay' ),
 				'desc_tip'          => true,
 			),
@@ -248,9 +251,9 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 			if ( '' !== $existing_id ) {
 				try {
 					$invoice = $zkp->getInvoice( $existing_id );
-					if ( ! $invoice->isTerminal() && strtotime( (string) $invoice->expiresAt ) > ( time() + 60 ) ) {
+					if ( ! $invoice->isTerminal() && strtotime( (string) $invoice->expiresAt ) > ( time() + 60 ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 						ZKP_Order_Service::apply_invoice( $order, $invoice );
-						return $invoice->checkoutUrl;
+						return $invoice->checkoutUrl; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 					}
 				} catch ( NetworkException $e ) {
 					// Fall through: create a new invoice; the idempotency key
@@ -285,7 +288,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 		$invoice  = $response->invoice;
 
 		$order->update_meta_data( '_zkp_invoice_id', $invoice->id );
-		$order->update_meta_data( '_zkp_checkout_url', $invoice->checkoutUrl );
+		$order->update_meta_data( '_zkp_checkout_url', $invoice->checkoutUrl ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 		$order->update_meta_data( '_zkp_created', time() );
 		ZKP_Invoice_Map::remember( $invoice->id, $order->get_id() );
 
@@ -309,7 +312,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 
 		ZKP_Logger::debug( sprintf( 'order %d: invoice %s created (seq %d)', $order->get_id(), $invoice->id, $seq ) );
 
-		return $invoice->checkoutUrl;
+		return $invoice->checkoutUrl; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 	}
 
 	/**
@@ -341,7 +344,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 	 */
 	public function admin_options(): void {
 		parent::admin_options();
-		$nonce = wp_create_nonce( 'zkp_ping' );
+		$nonce = wp_create_nonce( 'zerokyc_ping' );
 		?>
 		<div style="margin-top:1em">
 			<button type="button" class="button" id="zkp-ping"
@@ -358,7 +361,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 				var result = document.getElementById( 'zkp-ping-result' );
 				result.textContent = '…';
 				var body = new window.FormData();
-				body.append( 'action', 'zkp_ping' );
+				body.append( 'action', 'zerokyc_ping' );
 				body.append( 'nonce', button.getAttribute( 'data-nonce' ) );
 				window.fetch( window.ajaxurl, { method: 'POST', credentials: 'same-origin', body: body } )
 					.then( function ( response ) { return response.json(); } )
@@ -381,7 +384,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 	 * ajax action=zkp_ping: verifies the configured API key against /v1/ping.
 	 */
 	public static function ajax_ping(): void {
-		check_ajax_referer( 'zkp_ping', 'nonce' );
+		check_ajax_referer( 'zerokyc_ping', 'nonce' );
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_send_json_error( array( 'message' => 'forbidden' ), 403 );
 		}

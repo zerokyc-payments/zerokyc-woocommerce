@@ -22,7 +22,7 @@ final class ZKP_Http_Client implements HttpClientInterface {
 	public function request(
 		string $method,
 		string $url,
-		array $headers = [],
+		array $headers = array(),
 		?string $body = null,
 		?float $timeout = null,
 	): Response {

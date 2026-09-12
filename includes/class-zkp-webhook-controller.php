@@ -61,7 +61,7 @@ final class ZKP_Webhook_Controller {
 			return new WP_REST_Response( array( 'received' => true ), 200 );
 		}
 
-		if ( ! ZKP_Event_Store::claim( $event->id, $event->type, (string) $event->invoiceId ) ) {
+		if ( ! ZKP_Event_Store::claim( $event->id, $event->type, (string) $event->invoiceId ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 			ZKP_Logger::debug( sprintf( 'webhook %s: duplicate delivery, skipped', $event->id ) );
 			return new WP_REST_Response( array( 'received' => true ), 200 );
 		}

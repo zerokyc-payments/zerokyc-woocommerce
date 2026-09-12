@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<ruleset name="ZeroKYC Pay">
+    <description>WordPress coding standards for the zerokyc-pay plugin.</description>
+
+    <file>.</file>
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <exclude-pattern>/vendor/*</exclude-pattern>
+    <exclude-pattern>/tests/*</exclude-pattern>
+    <exclude-pattern>/docker/*</exclude-pattern>
+    <exclude-pattern>/tools/*</exclude-pattern>
+    <exclude-pattern>/bin/*</exclude-pattern>
+
+    <rule ref="WordPress-Core">
+        <!-- Hooks triggered by WooCommerce follow WC naming, not our prefix. -->
+        <exclude name="WordPress.NamingConventions.ValidHookName.UseHookUnderscores"/>
+    </rule>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="zerokyc-pay"/>
+            </property>
+        </properties>
+    </rule>
+
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="zerokyc"/>
+                <element value="ZKP_"/>
+            </property>
+        </properties>
+    </rule>
+
+    <config name="minimum_wp_version" value="6.5"/>
+    <config name="testVersion" value="8.1-"/>
+</ruleset>

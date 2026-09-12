@@ -46,7 +46,7 @@ final class ZKP_Invoice_Map {
 	 */
 	public static function maybe_create_table(): void {
 		global $wpdb;
-		$exists = $wpdb->query( 'SELECT 1 FROM ' . self::table() . ' LIMIT 1' );
+		$exists = $wpdb->query( $wpdb->prepare( 'SELECT 1 FROM %i LIMIT 1', self::table() ) );
 		if ( false === $exists ) {
 			self::create_table();
 		}
@@ -62,9 +62,10 @@ final class ZKP_Invoice_Map {
 		}
 		$wpdb->query(
 			$wpdb->prepare(
-				'INSERT INTO ' . self::table() . ' (invoice_id, order_id, created_at)
+				'INSERT INTO %i (invoice_id, order_id, created_at)
 				 VALUES (%s, %d, %s)
 				 ON DUPLICATE KEY UPDATE order_id = VALUES(order_id)',
+				self::table(),
 				$invoice_id,
 				$order_id,
 				current_time( 'mysql' )
@@ -75,7 +76,7 @@ final class ZKP_Invoice_Map {
 	public static function order_id_for( string $invoice_id ): ?int {
 		global $wpdb;
 		$found = $wpdb->get_var(
-			$wpdb->prepare( 'SELECT order_id FROM ' . self::table() . ' WHERE invoice_id = %s LIMIT 1', $invoice_id )
+			$wpdb->prepare( 'SELECT order_id FROM %i WHERE invoice_id = %s LIMIT 1', self::table(), $invoice_id )
 		);
 		return null === $found ? null : (int) $found;
 	}
@@ -88,7 +89,7 @@ final class ZKP_Invoice_Map {
 	public static function order_ids_since( string $mysql_datetime ): array {
 		global $wpdb;
 		$rows = $wpdb->get_col(
-			$wpdb->prepare( 'SELECT DISTINCT order_id FROM ' . self::table() . ' WHERE created_at >= %s', $mysql_datetime )
+			$wpdb->prepare( 'SELECT DISTINCT order_id FROM %i WHERE created_at >= %s', self::table(), $mysql_datetime )
 		);
 		return array_map( 'intval', (array) $rows );
 	}
@@ -97,7 +98,7 @@ final class ZKP_Invoice_Map {
 		global $wpdb;
 		return (int) $wpdb->query(
 			$wpdb->prepare(
-				'DELETE FROM ' . self::table() . ' WHERE created_at < DATE_SUB(%s, INTERVAL %d DAY)',
+				'DELETE FROM %i WHERE created_at < DATE_SUB(%s, INTERVAL %d DAY)',
 				current_time( 'mysql' ),
 				$days
 			)

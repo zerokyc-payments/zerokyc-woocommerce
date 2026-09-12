@@ -18,7 +18,7 @@ final class ZKP_Plugin {
 
 	public const TEXT_DOMAIN = 'zerokyc-pay';
 
-	public const CRON_HOOK = 'zkp_poll_pending';
+	public const CRON_HOOK = 'zerokyc_poll_pending';
 
 	/**
 	 * Hook everything. Called once from the main plugin file.
@@ -51,7 +51,7 @@ final class ZKP_Plugin {
 		add_action( 'rest_api_init', array( 'ZKP_Webhook_Controller', 'register_routes' ) );
 		add_filter( 'cron_schedules', array( 'ZKP_Cron', 'add_schedule' ) );
 		add_action( self::CRON_HOOK, array( 'ZKP_Cron', 'poll' ) );
-		add_action( 'wp_ajax_zkp_ping', array( 'ZKP_Gateway', 'ajax_ping' ) );
+		add_action( 'wp_ajax_zerokyc_ping', array( 'ZKP_Gateway', 'ajax_ping' ) );
 
 		// Keep the schedule alive if the gateway is enabled (self-healing, also
 		// covers sites that never ran the activation hook).
@@ -70,9 +70,9 @@ final class ZKP_Plugin {
 	 *
 	 * @param string $class Fully qualified class name.
 	 */
-	public static function autoload( string $class ): void {
-		if ( str_starts_with( $class, 'ZeroKYC\\' ) ) {
-			$relative = str_replace( '\\', '/', substr( $class, strlen( 'ZeroKYC\\' ) ) );
+	public static function autoload( string $class_name ): void {
+		if ( str_starts_with( $class_name, 'ZeroKYC\\' ) ) {
+			$relative = str_replace( '\\', '/', substr( $class_name, strlen( 'ZeroKYC\\' ) ) );
 			$file     = ZKP_PLUGIN_DIR . 'vendor/zerokyc/zkp-sdk-php/src/' . $relative . '.php';
 			if ( is_file( $file ) ) {
 				require_once $file;
@@ -80,8 +80,8 @@ final class ZKP_Plugin {
 			return;
 		}
 
-		if ( str_starts_with( $class, 'ZKP_' ) ) {
-			$slug = strtolower( str_replace( '_', '-', substr( $class, strlen( 'ZKP_' ) ) ) );
+		if ( str_starts_with( $class_name, 'ZKP_' ) ) {
+			$slug = strtolower( str_replace( '_', '-', substr( $class_name, strlen( 'ZKP_' ) ) ) );
 			$file = ZKP_PLUGIN_DIR . 'includes/class-zkp-' . $slug . '.php';
 			if ( is_file( $file ) ) {
 				require_once $file;

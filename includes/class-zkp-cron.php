@@ -9,8 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 final class ZKP_Cron {
 
-	public const HOOK    = 'zkp_poll_pending';
-	public const SLUG    = 'zkp_15min';
+	public const HOOK    = 'zerokyc_poll_pending';
+	public const SLUG    = 'zerokyc_15min';
 	public const WINDOW  = 24 * HOUR_IN_SECONDS;
 	private const BATCH  = 50;
 	private const STATUS = array( 'pending', 'on-hold', 'failed' );

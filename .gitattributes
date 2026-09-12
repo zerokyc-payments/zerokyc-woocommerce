@@ -13,3 +13,4 @@
 /.gitattributes    export-ignore
 /SUBMISSION.md     export-ignore
 /.wordpress-org   export-ignore
+/.phpunit.result.cache export-ignore

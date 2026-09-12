@@ -3,5 +3,6 @@
 /dist/
 composer.lock
 phpunit.xml
+.phpunit.result.cache
 .docker-data/
 *.zip

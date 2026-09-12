@@ -41,7 +41,14 @@ fi
 
 if [ ! -f "$WP_CORE_DIR/wp-load.php" ]; then
     mkdir -p "$WP_CORE_DIR"
-    svn export --force -q "$SVN_URL/src" "$WP_CORE_DIR"
+    if [ "$WP_VERSION" = "trunk" ]; then
+        svn export --force -q "$SVN_URL/src" "$WP_CORE_DIR"
+    else
+        # The release tarball ships the built wp-includes/assets/* bundles the
+        # SVN src tree generates at build time.
+        curl -sSL "https://wordpress.org/wordpress-$WP_VERSION.tar.gz" \
+            | tar xz --strip-components=1 -C "$WP_CORE_DIR"
+    fi
 fi
 
 if [ ! -f "$WP_TESTS_DIR/wp-tests-config.php" ]; then

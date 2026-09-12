@@ -37,4 +37,12 @@ if ( class_exists( 'WC_Install' ) ) {
 	update_option( 'woocommerce_currency', 'USD' );
 }
 
+// wc_add_notice()/wc_clear_notices() write into WC()->session, which is null
+// under the WP test suite.
+require_once __DIR__ . '/Support/class-zkp-test-session.php';
+require_once __DIR__ . '/Support/helpers.php';
+if ( isset( $GLOBALS['woocommerce'] ) && null === WC()->session ) {
+	WC()->session = new ZKP_Test_Session();
+}
+
 echo "WooCommerce + zerokyc-pay loaded\n";

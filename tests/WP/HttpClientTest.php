@@ -81,7 +81,9 @@ class HttpClientTest extends WP_UnitTestCase {
 					'cookies'  => array(),
 					'filename' => null,
 				);
-			}
+			},
+			10,
+			2
 		);
 
 		( new ZKP_Http_Client() )->request( 'GET', 'https://api.example.test/v1/ping' );

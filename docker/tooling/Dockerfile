@@ -10,7 +10,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 RUN composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true \
     && composer global require \
-        phpunit/phpunit:^10.5 \
+        phpunit/phpunit:^9.6 \
         yoast/phpunit-polyfills:^2.0 \
         wp-coding-standards/wpcs:^3.1 \
         dealerdirect/phpcodesniffer-composer-installer:^1.0 \

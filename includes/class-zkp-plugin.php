@@ -57,9 +57,10 @@ final class ZKP_Plugin {
 		// covers sites that never ran the activation hook).
 		add_action( 'init', array( 'ZKP_Cron', 'ensure_schedule' ) );
 
-		// Lazily create the events table on admin requests if it is missing
+		// Lazily create our tables on admin requests if they are missing
 		// (e.g. multisite or restored-from-backup installs).
 		add_action( 'admin_init', array( 'ZKP_Event_Store', 'maybe_create_table' ) );
+		add_action( 'admin_init', array( 'ZKP_Invoice_Map', 'maybe_create_table' ) );
 
 		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
 	}
@@ -110,11 +111,12 @@ final class ZKP_Plugin {
 	}
 
 	/**
-	 * Activation: create the webhook events table.
+	 * Activation: create the webhook events and invoice mapping tables.
 	 */
 	public static function activate(): void {
 		spl_autoload_register( array( __CLASS__, 'autoload' ) );
 		ZKP_Event_Store::create_table();
+		ZKP_Invoice_Map::create_table();
 	}
 
 	/**

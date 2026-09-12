@@ -82,13 +82,6 @@ Not automatically: crypto payments are one-way. Refund manually from your wallet
 
 The built-in cron poller reconciles orders with the invoice state every 15 minutes. You can also check the invoice id in the order notes against the console.
 
-== Screenshots ==
-
-1. ZeroKYC Pay gateway settings (API key, webhook secret, asset pinning).
-2. Test connection button verifying the API key and environment.
-3. The payment method at classic WooCommerce checkout.
-4. An order completed by a verified webhook, with payment evidence in the order notes.
-
 == Changelog ==
 
 = 1.0.0 =

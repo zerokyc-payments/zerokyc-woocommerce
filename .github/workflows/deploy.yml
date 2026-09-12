@@ -1,0 +1,45 @@
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  deploy:
+    name: SVN deploy (tag ${{ github.ref_name }})
+    runs-on: ubuntu-latest
+    if: github.repository == 'zerokyc-payments/zerokyc-woocommerce'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag matches the plugin version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION="$(grep -oP "Version:\s+\K[0-9.]+" zerokyc-pay.php)"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "Tag v$TAG does not match plugin Version: $VERSION"; exit 1
+          fi
+          STABLE="$(grep -oP "Stable tag:\s+\K[0-9.]+" readme.txt)"
+          if [ "$TAG" != "$STABLE" ]; then
+            echo "Tag v$TAG does not match readme Stable tag: $STABLE"; exit 1
+          fi
+
+      - name: Deploy to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SLUG: zerokyc-pay
+          ASSETS_DIR: .wordpress-org
+          VERSION_CONSTANT: ZKP_VERSION
+
+      - name: Build release zip
+        run: |
+          mkdir -p dist
+          git archive --format=zip --prefix=zerokyc-pay/ -o dist/zerokyc-pay.zip HEAD
+
+      - name: Attach zip to the GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/zerokyc-pay.zip

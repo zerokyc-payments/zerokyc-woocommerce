@@ -1,0 +1,22 @@
+name: Update WP.org assets
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.wordpress-org/**'
+
+jobs:
+  assets:
+    name: SVN /assets sync
+    runs-on: ubuntu-latest
+    if: github.repository == 'zerokyc-payments/zerokyc-woocommerce'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SLUG: zerokyc-pay
+          ASSETS_DIR: .wordpress-org

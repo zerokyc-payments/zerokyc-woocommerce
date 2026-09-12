@@ -1,0 +1,7 @@
+/vendor-web/
+/node_modules/
+/dist/
+composer.lock
+phpunit.xml
+.docker-data/
+*.zip

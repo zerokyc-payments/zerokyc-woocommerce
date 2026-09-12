@@ -1,0 +1,14 @@
+# Export Ignore: development-only paths stay out of git archives / release zips.
+/.github           export-ignore
+/bin               export-ignore
+/tests             export-ignore
+/tools             export-ignore
+/docker            export-ignore
+/docker-compose.yml export-ignore
+/phpcs.xml.dist    export-ignore
+/phpunit.xml.dist  export-ignore
+/composer.json     export-ignore
+/composer.lock     export-ignore
+/.gitignore        export-ignore
+/.gitattributes    export-ignore
+/SUBMISSION.md     export-ignore

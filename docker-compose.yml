@@ -1,0 +1,65 @@
+name: zerokyc-pay-dev
+
+services:
+  db:
+    image: mariadb:10.11
+    environment:
+      MYSQL_DATABASE: wordpress_test
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: wp
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - .docker-data/db:/var/lib/mysql
+
+  wp:
+    image: wordpress:php8.2-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wordpress_site
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG', true );
+        define( 'WP_DEBUG_LOG', true );
+    volumes:
+      - ./:/var/www/html/wp-content/plugins/zerokyc-pay
+      - .docker-data/uploads:/var/www/html/wp-content/uploads
+
+  wpcli:
+    image: wordpress:cli-php8.2
+    depends_on:
+      db:
+        condition: service_healthy
+    user: "33:33"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wordpress_site
+    volumes:
+      - ./:/var/www/html/wp-content/plugins/zerokyc-pay
+      - .docker-data/uploads:/var/www/html/wp-content/uploads
+
+  tooling:
+    build: docker/tooling
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles: [ test, cs ]
+    environment:
+      DB_NAME: wordpress_test
+      DB_USER: root
+      DB_PASS: root
+      DB_HOST: db
+    volumes:
+      - ./:/app

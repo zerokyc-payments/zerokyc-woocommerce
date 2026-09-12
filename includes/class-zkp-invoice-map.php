@@ -99,6 +99,7 @@ final class ZKP_Invoice_Map {
 		return (int) $wpdb->query(
 			$wpdb->prepare(
 				'DELETE FROM %i WHERE created_at < DATE_SUB(%s, INTERVAL %d DAY)',
+				self::table(),
 				current_time( 'mysql' ),
 				$days
 			)

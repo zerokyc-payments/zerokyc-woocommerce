@@ -46,8 +46,8 @@ final class ZKP_Http_Client implements HttpClientInterface {
 		if ( is_wp_error( $result ) ) {
 			// Not user-facing output: the message only reaches logs and caught
 			// exceptions, so HTML escaping would corrupt it.
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new NetworkException(
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- internal error string, never rendered
 				sprintf( 'wp_remote failure (%s): %s', $result->get_error_code(), $result->get_error_message() )
 			);
 		}

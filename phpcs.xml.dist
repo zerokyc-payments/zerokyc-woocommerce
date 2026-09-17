@@ -12,6 +12,8 @@
     <exclude-pattern>/docker/*</exclude-pattern>
     <exclude-pattern>/tools/*</exclude-pattern>
     <exclude-pattern>/bin/*</exclude-pattern>
+    <exclude-pattern>/build-check/*</exclude-pattern>
+    <exclude-pattern>/dist/*</exclude-pattern>
 
     <rule ref="WordPress-Core">
         <!-- Hooks triggered by WooCommerce follow WC naming, not our prefix. -->

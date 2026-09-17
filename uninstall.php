@@ -8,7 +8,9 @@
  * @package zerokyc-pay
  */
 
-defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) || ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 delete_option( 'woocommerce_zerokyc_pay_settings' );
 wp_clear_scheduled_hook( 'zerokyc_poll_pending' );

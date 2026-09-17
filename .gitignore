@@ -1,6 +1,7 @@
 /vendor-web/
 /node_modules/
 /dist/
+/build-check/
 composer.lock
 phpunit.xml
 .phpunit.result.cache

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       ZeroKYC Pay
- * Plugin URI:        https://zerokyc-payments.com
+ * Plugin URI:        https://github.com/zerokyc-payments/zerokyc-woocommerce
  * Description:       Accept crypto payments (USDT, USDC, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC, non-custodial option, webhooks verified by HMAC signature.
  * Version:           1.0.0
  * Requires at least: 6.5

@@ -244,13 +244,13 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 	 */
 	private function ensure_invoice( WC_Order $order, string $currency ): string {
 		$settings = self::settings();
-		$zkp      = self::sdk();
+		$sdk      = self::sdk();
 
 		if ( ! $order->is_paid() ) {
 			$existing_id = (string) $order->get_meta( '_zerokyc_invoice_id' );
 			if ( '' !== $existing_id ) {
 				try {
-					$invoice = $zkp->getInvoice( $existing_id );
+					$invoice = $sdk->getInvoice( $existing_id );
 					if ( ! $invoice->isTerminal() && strtotime( (string) $invoice->expiresAt ) > ( time() + 60 ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 						ZEROKYC_Order_Service::apply_invoice( $order, $invoice );
 						return $invoice->checkoutUrl; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
@@ -281,7 +281,7 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 				)
 			);
 
-		$response = $zkp->createInvoice(
+		$response = $sdk->createInvoice(
 			$request,
 			IdempotencyKey::make( 'woocommerce', 'order', $order->get_id() . ':' . $seq )
 		);
@@ -397,8 +397,8 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 		}
 
 		try {
-			$zkp  = self::sdk();
-			$body = $zkp->ping();
+			$sdk  = self::sdk();
+			$body = $sdk->ping();
 		} catch ( RuntimeException $e ) {
 			wp_send_json_error( array( 'message' => $e->getMessage() ) );
 		} catch ( AuthenticationException $e ) {
@@ -409,7 +409,7 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 
 		wp_send_json_success(
 			array(
-				'environment' => $zkp->config->isSandbox() ? 'sandbox' : 'production',
+				'environment' => $sdk->config->isSandbox() ? 'sandbox' : 'production',
 				'chain_mode'  => is_string( $body['chain_mode'] ?? null ) ? $body['chain_mode'] : null,
 			)
 		);

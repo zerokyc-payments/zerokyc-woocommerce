@@ -53,7 +53,7 @@ final class ZEROKYC_Cron {
 		$candidates = array_slice( $candidates, 0 - self::BATCH );
 
 		try {
-			$zkp = ZEROKYC_Gateway::sdk();
+			$sdk = ZEROKYC_Gateway::sdk();
 		} catch ( RuntimeException $e ) {
 			ZEROKYC_Logger::warning( 'cron: cannot build SDK client - ' . $e->getMessage() );
 			return;
@@ -70,7 +70,7 @@ final class ZEROKYC_Cron {
 			}
 
 			try {
-				ZEROKYC_Order_Service::apply_invoice( $order, $zkp->getInvoice( $invoice_id ) );
+				ZEROKYC_Order_Service::apply_invoice( $order, $sdk->getInvoice( $invoice_id ) );
 			} catch ( ZeroKYC\Exception\NetworkException $e ) {
 				continue; // next tick retries
 			} catch ( ZeroKYC\Exception\ZeroKYCException $e ) {

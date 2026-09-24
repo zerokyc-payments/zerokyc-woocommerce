@@ -15,7 +15,7 @@ WordPress.org генерирует постоянный слаг из `Plugin Na
 
 ## Шаг 1. Отправить на ревью (5 минут)
 
-1. Убедись, что аккаунт **zerokypayments** создан на wordpress.org (email на
+1. Убедись, что аккаунт **zerokycpayments** создан на wordpress.org (email на
    домене zerokyc-payments.com — ревьюеры сверяют представительство бренда;
    `plugins@wordpress.org` в белом списке почты).
 2. Открой **https://wordpress.org/plugins/developers/add/** под этим аккаунтом.
@@ -34,7 +34,7 @@ WordPress.org генерирует постоянный слаг из `Plugin Na
 
 5. Прикрепи **dist/zerokyc-pay.zip** → Submit.
 
-Если ревьюер спросит про права на бренд: аккаунт zerokypayments, домен
+Если ревьюер спросит про права на бренд: аккаунт zerokycpayments, домен
 zerokyc-payments.com, сервис принадлежит тебе. Слаг можно изменить один раз до
 начала ревью (ссылка на странице сабмита), но при имени «ZeroKYC Pay» он сразу
 будет правильным.
@@ -51,7 +51,7 @@ zerokyc-payments.com, сервис принадлежит тебе. Слаг м�
    `readme.txt` — такой же. Коммит в main.
 2. На GitHub: **Settings → Secrets and variables → Actions → New repository
    secret**:
-   - `SVN_USERNAME` = `zerokypayments`
+   - `SVN_USERNAME` = `zerokycpayments`
    - `SVN_PASSWORD` = пароль аккаунта WP.org
 3. Локально:
 

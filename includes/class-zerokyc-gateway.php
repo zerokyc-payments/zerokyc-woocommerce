@@ -363,8 +363,11 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 		if ( 'woocommerce_page_wc-settings' !== $hook_suffix ) {
 			return;
 		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- view-state switch, no state change
-		if ( ( $_GET['tab'] ?? '' ) !== 'checkout' || ( $_GET['section'] ?? '' ) !== self::ID ) {
+		$tab     = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+		$section = isset( $_GET['section'] ) ? sanitize_key( wp_unslash( $_GET['section'] ) ) : '';
+		if ( 'checkout' !== $tab || self::ID !== $section ) {
 			return;
 		}
 

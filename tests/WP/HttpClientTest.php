@@ -21,7 +21,7 @@ class HttpClientTest extends WP_UnitTestCase {
 			}
 		);
 
-		$client = new ZKP_Http_Client();
+		$client = new ZEROKYC_Http_Client();
 		$response = $client->request( 'POST', 'https://api.example.test/v1/invoices', array( 'Authorization' => 'Bearer x' ), '{}', 5.0 );
 
 		$this->assertSame( 201, $response->status );
@@ -39,7 +39,7 @@ class HttpClientTest extends WP_UnitTestCase {
 			}
 		);
 
-		$client = new ZKP_Http_Client();
+		$client = new ZEROKYC_Http_Client();
 
 		$this->expectException( NetworkException::class );
 		$this->expectExceptionMessage( 'http_request_timeout' );
@@ -61,7 +61,7 @@ class HttpClientTest extends WP_UnitTestCase {
 			}
 		);
 
-		$client  = new ZKP_Http_Client();
+		$client  = new ZEROKYC_Http_Client();
 		$response = $client->request( 'GET', 'https://api.example.test/v1/ping' );
 
 		$this->assertSame( 401, $response->status );
@@ -86,7 +86,7 @@ class HttpClientTest extends WP_UnitTestCase {
 			2
 		);
 
-		( new ZKP_Http_Client() )->request( 'GET', 'https://api.example.test/v1/ping' );
+		( new ZEROKYC_Http_Client() )->request( 'GET', 'https://api.example.test/v1/ping' );
 
 		$this->assertSame( 15.0, (float) $captured['timeout'] );
 		$this->assertSame( 0, (int) $captured['redirection'] );

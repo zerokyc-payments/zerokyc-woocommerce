@@ -17,13 +17,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ZKP_VERSION', '1.0.0' );
-define( 'ZKP_PLUGIN_FILE', __FILE__ );
-define( 'ZKP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'ZEROKYC_VERSION', '1.0.0' );
+define( 'ZEROKYC_PLUGIN_FILE', __FILE__ );
+define( 'ZEROKYC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
-require_once __DIR__ . '/includes/class-zkp-plugin.php';
+require_once __DIR__ . '/includes/class-zerokyc-plugin.php';
 
-register_activation_hook( __FILE__, array( 'ZKP_Plugin', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'ZKP_Plugin', 'deactivate' ) );
+register_activation_hook( __FILE__, array( 'ZEROKYC_Plugin', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'ZEROKYC_Plugin', 'deactivate' ) );
 
-ZKP_Plugin::boot();
+ZEROKYC_Plugin::boot();

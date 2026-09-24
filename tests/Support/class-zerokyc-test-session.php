@@ -6,9 +6,9 @@
  * @package zerokyc-pay
  */
 
-if ( ! class_exists( 'ZKP_Test_Session' ) && interface_exists( 'WC_Session' ) ) {
+if ( ! class_exists( 'ZEROKYC_Test_Session' ) && interface_exists( 'WC_Session' ) ) {
 
-	class ZKP_Test_Session implements WC_Session {
+	class ZEROKYC_Test_Session implements WC_Session {
 
 		/** @var array<string,mixed> */
 		private array $data = array();

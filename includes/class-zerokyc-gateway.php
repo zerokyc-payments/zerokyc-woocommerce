@@ -17,7 +17,7 @@ use ZeroKYC\Invoice\CreateInvoiceRequest;
 use ZeroKYC\Invoice\InvoiceStatus;
 use ZeroKYC\ZeroKYC;
 
-final class ZKP_Gateway extends WC_Payment_Gateway {
+final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 
 	public const ID = 'zerokyc_pay';
 
@@ -155,7 +155,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 	 * falls back to ?rest_route= automatically when pretty permalinks are off.
 	 */
 	public static function webhook_url(): string {
-		return rest_url( 'zkp/v1/webhook' );
+		return rest_url( 'zerokyc/v1/webhook' );
 	}
 
 	/**
@@ -187,7 +187,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 					'max_retries'    => 2,
 				)
 			),
-			new ZKP_Http_Client(),
+			new ZEROKYC_Http_Client(),
 		);
 	}
 
@@ -220,11 +220,11 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 		try {
 			$checkout_url = $this->ensure_invoice( $order, $currency );
 		} catch ( AuthenticationException | ValidationException $e ) {
-			ZKP_Logger::alert( sprintf( 'order %d rejected by API: %s', $order->get_id(), $e->getMessage() ) );
+			ZEROKYC_Logger::alert( sprintf( 'order %d rejected by API: %s', $order->get_id(), $e->getMessage() ) );
 			wc_add_notice( __( 'Payment could not be started. The store administrator has been notified.', 'zerokyc-pay' ), 'error' );
 			return array( 'result' => 'failure' );
 		} catch ( NetworkException | ApiException | RuntimeException $e ) {
-			ZKP_Logger::warning( sprintf( 'order %d invoice creation failed: %s', $order->get_id(), $e->getMessage() ) );
+			ZEROKYC_Logger::warning( sprintf( 'order %d invoice creation failed: %s', $order->get_id(), $e->getMessage() ) );
 			wc_add_notice( __( 'The payment service is temporarily unavailable. Please try again in a moment.', 'zerokyc-pay' ), 'error' );
 			return array( 'result' => 'failure' );
 		}
@@ -247,12 +247,12 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 		$zkp      = self::sdk();
 
 		if ( ! $order->is_paid() ) {
-			$existing_id = (string) $order->get_meta( '_zkp_invoice_id' );
+			$existing_id = (string) $order->get_meta( '_zerokyc_invoice_id' );
 			if ( '' !== $existing_id ) {
 				try {
 					$invoice = $zkp->getInvoice( $existing_id );
 					if ( ! $invoice->isTerminal() && strtotime( (string) $invoice->expiresAt ) > ( time() + 60 ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
-						ZKP_Order_Service::apply_invoice( $order, $invoice );
+						ZEROKYC_Order_Service::apply_invoice( $order, $invoice );
 						return $invoice->checkoutUrl; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 					}
 				} catch ( NetworkException $e ) {
@@ -262,8 +262,8 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 			}
 		}
 
-		$seq = (int) $order->get_meta( '_zkp_seq' ) + 1;
-		$order->update_meta_data( '_zkp_seq', $seq );
+		$seq = (int) $order->get_meta( '_zerokyc_seq' ) + 1;
+		$order->update_meta_data( '_zerokyc_seq', $seq );
 
 		$payment_currency = (string) ( $settings['payment_currency'] ?? 'any' );
 		$request          = CreateInvoiceRequest::make( self::format_amount( $order->get_total() ), $currency )
@@ -287,16 +287,16 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 		);
 		$invoice  = $response->invoice;
 
-		$order->update_meta_data( '_zkp_invoice_id', $invoice->id );
-		$order->update_meta_data( '_zkp_checkout_url', $invoice->checkoutUrl ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
-		$order->update_meta_data( '_zkp_created', time() );
-		ZKP_Invoice_Map::remember( $invoice->id, $order->get_id() );
+		$order->update_meta_data( '_zerokyc_invoice_id', $invoice->id );
+		$order->update_meta_data( '_zerokyc_checkout_url', $invoice->checkoutUrl ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
+		$order->update_meta_data( '_zerokyc_created', time() );
+		ZEROKYC_Invoice_Map::remember( $invoice->id, $order->get_id() );
 
 		if ( 'any' !== $payment_currency ) {
 			$option = $invoice->option( $payment_currency );
 			if ( null !== $option && isset( $option['amount'] ) ) {
-				$order->update_meta_data( '_zkp_asset', $payment_currency );
-				$order->update_meta_data( '_zkp_amount_crypto', (string) $option['amount'] );
+				$order->update_meta_data( '_zerokyc_asset', $payment_currency );
+				$order->update_meta_data( '_zerokyc_amount_crypto', (string) $option['amount'] );
 			}
 		}
 
@@ -310,7 +310,7 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 		);
 		$order->save();
 
-		ZKP_Logger::debug( sprintf( 'order %d: invoice %s created (seq %d)', $order->get_id(), $invoice->id, $seq ) );
+		ZEROKYC_Logger::debug( sprintf( 'order %d: invoice %s created (seq %d)', $order->get_id(), $invoice->id, $seq ) );
 
 		return $invoice->checkoutUrl; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
 	}
@@ -344,40 +344,47 @@ final class ZKP_Gateway extends WC_Payment_Gateway {
 	 */
 	public function admin_options(): void {
 		parent::admin_options();
-		$nonce = wp_create_nonce( 'zerokyc_ping' );
 		?>
 		<div style="margin-top:1em">
-			<button type="button" class="button" id="zkp-ping"
-				data-nonce="<?php echo esc_attr( $nonce ); ?>">
+			<button type="button" class="button" id="zerokyc-ping">
 				<?php esc_html_e( 'Test connection', 'zerokyc-pay' ); ?>
 			</button>
-			<span id="zkp-ping-result" style="margin-left:.5em"></span>
+			<span id="zerokyc-ping-result" style="margin-left:.5em"></span>
 		</div>
-		<script>
-		( function () {
-			var button = document.getElementById( 'zkp-ping' );
-			if ( ! button ) { return; }
-			button.addEventListener( 'click', function () {
-				var result = document.getElementById( 'zkp-ping-result' );
-				result.textContent = '…';
-				var body = new window.FormData();
-				body.append( 'action', 'zerokyc_ping' );
-				body.append( 'nonce', button.getAttribute( 'data-nonce' ) );
-				window.fetch( window.ajaxurl, { method: 'POST', credentials: 'same-origin', body: body } )
-					.then( function ( response ) { return response.json(); } )
-					.then( function ( json ) {
-						var data = json && json.data ? json.data : {};
-						if ( json && json.success ) {
-							result.textContent = data.environment + ': OK' + ( data.chain_mode ? ' (' + data.chain_mode + ')' : '' );
-						} else {
-							result.textContent = 'Failed: ' + ( data.message || 'unknown error' );
-						}
-					} )
-					.catch( function () { result.textContent = 'Request failed'; } );
-			} );
-		} )();
-		</script>
 		<?php
+	}
+
+	/**
+	 * Enqueues the "Test connection" script on the gateway settings page only.
+	 *
+	 * @param string $hook_suffix Current admin page hook.
+	 */
+	public static function enqueue_admin_assets( string $hook_suffix ): void {
+		if ( 'woocommerce_page_wc-settings' !== $hook_suffix ) {
+			return;
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- view-state switch, no state change
+		if ( ( $_GET['tab'] ?? '' ) !== 'checkout' || ( $_GET['section'] ?? '' ) !== self::ID ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'zerokyc-pay-admin',
+			plugins_url( 'assets/js/admin.js', ZEROKYC_PLUGIN_FILE ),
+			array(),
+			ZEROKYC_VERSION,
+			true
+		);
+		wp_add_inline_script(
+			'zerokyc-pay-admin',
+			'window.zerokycPayAdmin = ' . (string) wp_json_encode(
+				array(
+					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+					'nonce'   => wp_create_nonce( 'zerokyc_ping' ),
+				)
+			) . ';',
+			'before'
+		);
 	}
 
 	/**

@@ -2,7 +2,7 @@
 /**
  * Uninstall cleanup: removes plugin options and the cron schedule.
  *
- * Order meta (_zkp_*) and the zerokyc_events / zerokyc_invoices tables are
+ * Order meta (_zerokyc_*) and the zerokyc_events / zerokyc_invoices tables are
  * financial bookkeeping records and are intentionally kept.
  *
  * @package zerokyc-pay

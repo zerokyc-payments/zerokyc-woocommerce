@@ -12,8 +12,8 @@ class WebhookTest extends WP_UnitTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		ZKP_Event_Store::create_table();
-		ZKP_Invoice_Map::create_table();
+		ZEROKYC_Event_Store::create_table();
+		ZEROKYC_Invoice_Map::create_table();
 		update_option(
 			'woocommerce_zerokyc_pay_settings',
 			array(
@@ -39,13 +39,13 @@ class WebhookTest extends WP_UnitTestCase {
 		$order->set_address( array( 'email' => 'buyer@example.test' ), 'billing' );
 		$order->calculate_totals();
 		$order->update_status( 'on-hold', 'awaiting crypto' );
-		ZKP_Invoice_Map::remember( $invoice_id, $order->get_id() );
-		$order->update_meta_data( '_zkp_invoice_id', $invoice_id );
+		ZEROKYC_Invoice_Map::remember( $invoice_id, $order->get_id() );
+		$order->update_meta_data( '_zerokyc_invoice_id', $invoice_id );
 		if ( '' !== $asset ) {
-			$order->update_meta_data( '_zkp_asset', $asset );
+			$order->update_meta_data( '_zerokyc_asset', $asset );
 		}
 		if ( '' !== $amount_crypto ) {
-			$order->update_meta_data( '_zkp_amount_crypto', $amount_crypto );
+			$order->update_meta_data( '_zerokyc_amount_crypto', $amount_crypto );
 		}
 		$order->save();
 
@@ -53,7 +53,7 @@ class WebhookTest extends WP_UnitTestCase {
 	}
 
 	private function dispatch( string $raw_body, string $signature ): WP_REST_Response {
-		$request = new WP_REST_Request( 'POST', '/zkp/v1/webhook' );
+		$request = new WP_REST_Request( 'POST', '/zerokyc/v1/webhook' );
 		$request->set_header( 'X-Zkp-Signature', $signature );
 		$request->set_body( $raw_body );
 
@@ -85,7 +85,7 @@ class WebhookTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$order = wc_get_order( $order->get_id() );
 		$this->assertTrue( $order->is_paid() );
-		$this->assertSame( 'USDT_TRON', $order->get_meta( '_zkp_paid_asset' ) );
+		$this->assertSame( 'USDT_TRON', $order->get_meta( '_zerokyc_paid_asset' ) );
 	}
 
 	public function test_duplicate_event_id_is_skipped(): void {
@@ -122,7 +122,7 @@ class WebhookTest extends WP_UnitTestCase {
 	public function test_missing_signature_header_rejected(): void {
 		$this->make_order( 'inv_hook_004' );
 
-		$request = new WP_REST_Request( 'POST', '/zkp/v1/webhook' );
+		$request = new WP_REST_Request( 'POST', '/zerokyc/v1/webhook' );
 		$request->set_body( self::confirmed_body( 'inv_hook_004' ) );
 
 		$response = rest_get_server()->dispatch( $request );

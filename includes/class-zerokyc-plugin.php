@@ -11,10 +11,10 @@ defined( 'ABSPATH' ) || exit;
  * Bootstraps the plugin and owns the autoloader.
  *
  * Autoloading rules (no Composer at runtime):
- *  - ZKP_Foo_Bar            -> includes/class-zkp-foo-bar.php
+ *  - ZEROKYC_Foo_Bar            -> includes/class-zerokyc-foo-bar.php
  *  - ZeroKYC\... (SDK, PSR-4) -> vendor/zerokyc/zkp-sdk-php/src/
  */
-final class ZKP_Plugin {
+final class ZEROKYC_Plugin {
 
 	public const TEXT_DOMAIN = 'zerokyc-pay';
 
@@ -48,19 +48,20 @@ final class ZKP_Plugin {
 		}
 
 		add_filter( 'woocommerce_payment_gateways', array( __CLASS__, 'register_gateway' ) );
-		add_action( 'rest_api_init', array( 'ZKP_Webhook_Controller', 'register_routes' ) );
-		add_filter( 'cron_schedules', array( 'ZKP_Cron', 'add_schedule' ) );
-		add_action( self::CRON_HOOK, array( 'ZKP_Cron', 'poll' ) );
-		add_action( 'wp_ajax_zerokyc_ping', array( 'ZKP_Gateway', 'ajax_ping' ) );
+		add_action( 'rest_api_init', array( 'ZEROKYC_Webhook_Controller', 'register_routes' ) );
+		add_filter( 'cron_schedules', array( 'ZEROKYC_Cron', 'add_schedule' ) );
+		add_action( self::CRON_HOOK, array( 'ZEROKYC_Cron', 'poll' ) );
+		add_action( 'wp_ajax_zerokyc_ping', array( 'ZEROKYC_Gateway', 'ajax_ping' ) );
+		add_action( 'admin_enqueue_scripts', array( 'ZEROKYC_Gateway', 'enqueue_admin_assets' ) );
 
 		// Keep the schedule alive if the gateway is enabled (self-healing, also
 		// covers sites that never ran the activation hook).
-		add_action( 'init', array( 'ZKP_Cron', 'ensure_schedule' ) );
+		add_action( 'init', array( 'ZEROKYC_Cron', 'ensure_schedule' ) );
 
 		// Lazily create our tables on admin requests if they are missing
 		// (e.g. multisite or restored-from-backup installs).
-		add_action( 'admin_init', array( 'ZKP_Event_Store', 'maybe_create_table' ) );
-		add_action( 'admin_init', array( 'ZKP_Invoice_Map', 'maybe_create_table' ) );
+		add_action( 'admin_init', array( 'ZEROKYC_Event_Store', 'maybe_create_table' ) );
+		add_action( 'admin_init', array( 'ZEROKYC_Invoice_Map', 'maybe_create_table' ) );
 	}
 
 	/**
@@ -71,16 +72,16 @@ final class ZKP_Plugin {
 	public static function autoload( string $class_name ): void {
 		if ( str_starts_with( $class_name, 'ZeroKYC\\' ) ) {
 			$relative = str_replace( '\\', '/', substr( $class_name, strlen( 'ZeroKYC\\' ) ) );
-			$file     = ZKP_PLUGIN_DIR . 'vendor/zerokyc/zkp-sdk-php/src/' . $relative . '.php';
+			$file     = ZEROKYC_PLUGIN_DIR . 'vendor/zerokyc/zkp-sdk-php/src/' . $relative . '.php';
 			if ( is_file( $file ) ) {
 				require_once $file;
 			}
 			return;
 		}
 
-		if ( str_starts_with( $class_name, 'ZKP_' ) ) {
-			$slug = strtolower( str_replace( '_', '-', substr( $class_name, strlen( 'ZKP_' ) ) ) );
-			$file = ZKP_PLUGIN_DIR . 'includes/class-zkp-' . $slug . '.php';
+		if ( str_starts_with( $class_name, 'ZEROKYC_' ) ) {
+			$slug = strtolower( str_replace( '_', '-', substr( $class_name, strlen( 'ZEROKYC_' ) ) ) );
+			$file = ZEROKYC_PLUGIN_DIR . 'includes/class-zerokyc-' . $slug . '.php';
 			if ( is_file( $file ) ) {
 				require_once $file;
 			}
@@ -92,7 +93,7 @@ final class ZKP_Plugin {
 	 */
 	public static function declare_wc_compatibility(): void {
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ZKP_PLUGIN_FILE, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ZEROKYC_PLUGIN_FILE, true );
 		}
 	}
 
@@ -100,7 +101,7 @@ final class ZKP_Plugin {
 	 * @return array<int, class-string>
 	 */
 	public static function register_gateway( array $gateways ): array {
-		$gateways[] = 'ZKP_Gateway';
+		$gateways[] = 'ZEROKYC_Gateway';
 		return $gateways;
 	}
 
@@ -109,8 +110,8 @@ final class ZKP_Plugin {
 	 */
 	public static function activate(): void {
 		spl_autoload_register( array( __CLASS__, 'autoload' ) );
-		ZKP_Event_Store::create_table();
-		ZKP_Invoice_Map::create_table();
+		ZEROKYC_Event_Store::create_table();
+		ZEROKYC_Invoice_Map::create_table();
 	}
 
 	/**

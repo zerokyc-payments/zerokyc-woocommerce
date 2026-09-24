@@ -9,8 +9,8 @@ class ProcessPaymentTest extends WP_UnitTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		ZKP_Event_Store::create_table();
-		ZKP_Invoice_Map::create_table();
+		ZEROKYC_Event_Store::create_table();
+		ZEROKYC_Invoice_Map::create_table();
 		update_option(
 			'woocommerce_zerokyc_pay_settings',
 			array(
@@ -20,7 +20,7 @@ class ProcessPaymentTest extends WP_UnitTestCase {
 			)
 		);
 		update_option( 'woocommerce_currency', 'USD' );
-		WC()->session = WC()->session ?: new ZKP_Test_Session();
+		WC()->session = WC()->session ?: new ZEROKYC_Test_Session();
 	}
 
 	private function make_order(): WC_Order {
@@ -93,7 +93,7 @@ class ProcessPaymentTest extends WP_UnitTestCase {
 		$order    = $this->make_order();
 		$GLOBALS['zkp_expected_order_id'] = $order->get_id();
 
-		$gateway = zkp_test_gateway();
+		$gateway = zerokyc_test_gateway();
 		$result  = $gateway->process_payment( $order->get_id() );
 
 		$this->assertSame( 'success', $result['result'] );
@@ -111,9 +111,9 @@ class ProcessPaymentTest extends WP_UnitTestCase {
 		// Order state + metadata.
 		$order = wc_get_order( $order->get_id() );
 		$this->assertTrue( $order->has_status( 'on-hold' ) );
-		$this->assertSame( 'inv_test_001', $order->get_meta( '_zkp_invoice_id' ) );
-		$this->assertSame( 'https://checkout.zerokyc-payments.test/i/inv_test_001', $order->get_meta( '_zkp_checkout_url' ) );
-		$this->assertSame( 1, (int) $order->get_meta( '_zkp_seq' ) );
+		$this->assertSame( 'inv_test_001', $order->get_meta( '_zerokyc_invoice_id' ) );
+		$this->assertSame( 'https://checkout.zerokyc-payments.test/i/inv_test_001', $order->get_meta( '_zerokyc_checkout_url' ) );
+		$this->assertSame( 1, (int) $order->get_meta( '_zerokyc_seq' ) );
 
 		$body = json_decode( (string) $first['args']['body'], true );
 		$this->assertSame( '19.90', $body['amount'] );
@@ -133,7 +133,7 @@ class ProcessPaymentTest extends WP_UnitTestCase {
 
 		$order = $this->make_order();
 
-		$gateway = zkp_test_gateway();
+		$gateway = zerokyc_test_gateway();
 		$result  = $gateway->process_payment( $order->get_id() );
 
 		$this->assertSame( 'failure', $result['result'] );
@@ -154,7 +154,7 @@ class ProcessPaymentTest extends WP_UnitTestCase {
 		$order = $this->make_order();
 		$GLOBALS['zkp_expected_order_id'] = $order->get_id();
 
-		$gateway = zkp_test_gateway();
+		$gateway = zerokyc_test_gateway();
 
 		$first = $gateway->process_payment( $order->get_id() );
 		$this->assertSame( 'success', $first['result'] );
@@ -190,17 +190,17 @@ class ProcessPaymentTest extends WP_UnitTestCase {
 		$order = $this->make_order();
 		$GLOBALS['zkp_expected_order_id'] = $order->get_id();
 
-		$order->update_meta_data( '_zkp_invoice_id', 'inv_test_expired' );
-		$order->update_meta_data( '_zkp_seq', 1 );
+		$order->update_meta_data( '_zerokyc_invoice_id', 'inv_test_expired' );
+		$order->update_meta_data( '_zerokyc_seq', 1 );
 		$order->update_status( 'on-hold', 'old invoice', true );
 
-		$gateway = zkp_test_gateway();
+		$gateway = zerokyc_test_gateway();
 		$result  = $gateway->process_payment( $order->get_id() );
 
 		$this->assertSame( 'success', $result['result'] );
 
 		$order = wc_get_order( $order->get_id() );
-		$this->assertSame( 2, (int) $order->get_meta( '_zkp_seq' ) );
+		$this->assertSame( 2, (int) $order->get_meta( '_zerokyc_seq' ) );
 
 		unset( $GLOBALS['zkp_expected_order_id'] );
 	}

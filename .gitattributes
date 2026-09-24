@@ -15,3 +15,4 @@
 /.wordpress-org   export-ignore
 /.phpunit.result.cache export-ignore
 /README.md         export-ignore
+vendor/zerokyc/zkp-sdk-php/COMMIT export-ignore

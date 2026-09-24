@@ -39,10 +39,10 @@ if ( class_exists( 'WC_Install' ) ) {
 
 // wc_add_notice()/wc_clear_notices() write into WC()->session, which is null
 // under the WP test suite.
-require_once __DIR__ . '/Support/class-zkp-test-session.php';
+require_once __DIR__ . '/Support/class-zerokyc-test-session.php';
 require_once __DIR__ . '/Support/helpers.php';
 if ( isset( $GLOBALS['woocommerce'] ) && null === WC()->session ) {
-	WC()->session = new ZKP_Test_Session();
+	WC()->session = new ZEROKYC_Test_Session();
 }
 
 echo "WooCommerce + zerokyc-pay loaded\n";

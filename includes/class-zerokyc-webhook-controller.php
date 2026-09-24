@@ -2,7 +2,7 @@
 /**
  * Public REST endpoint receiving signed ZeroKYC webhook deliveries.
  *
- * Route: POST /wp-json/zkp/v1/webhook (permission: the HMAC signature itself —
+ * Route: POST /wp-json/zerokyc/v1/webhook (permission: the HMAC signature itself —
  * no WordPress auth is involved by design).
  *
  * @package zerokyc-pay
@@ -13,9 +13,9 @@ defined( 'ABSPATH' ) || exit;
 use ZeroKYC\Exception\WebhookVerificationException;
 use ZeroKYC\Webhook\WebhookVerifier;
 
-final class ZKP_Webhook_Controller {
+final class ZEROKYC_Webhook_Controller {
 
-	public const NAMESPACE_V1 = 'zkp/v1';
+	public const NAMESPACE_V1 = 'zerokyc/v1';
 	public const ROUTE        = '/webhook';
 
 	public static function register_routes(): void {
@@ -34,11 +34,11 @@ final class ZKP_Webhook_Controller {
 	 * @return WP_REST_Response
 	 */
 	public static function handle( WP_REST_Request $request ): WP_REST_Response {
-		$settings = ZKP_Gateway::settings();
+		$settings = ZEROKYC_Gateway::settings();
 		$secret   = trim( (string) ( $settings['webhook_secret'] ?? '' ) );
 
 		if ( '' === $secret ) {
-			ZKP_Logger::alert( 'webhook received but no webhook_secret is configured' );
+			ZEROKYC_Logger::alert( 'webhook received but no webhook_secret is configured' );
 			return new WP_REST_Response(
 				array( 'error' => 'webhook_secret_not_configured' ),
 				503
@@ -53,7 +53,7 @@ final class ZKP_Webhook_Controller {
 		} catch ( WebhookVerificationException $e ) {
 			// Garbage must not be retried forever; genuine failures are
 			// re-delivered by the platform after the reason is fixed.
-			ZKP_Logger::warning( sprintf( 'webhook rejected (%s)', $e->reason ) );
+			ZEROKYC_Logger::warning( sprintf( 'webhook rejected (%s)', $e->reason ) );
 			return new WP_REST_Response( array( 'error' => 'invalid_signature' ), 400 );
 		}
 
@@ -61,12 +61,12 @@ final class ZKP_Webhook_Controller {
 			return new WP_REST_Response( array( 'received' => true ), 200 );
 		}
 
-		if ( ! ZKP_Event_Store::claim( $event->id, $event->type, (string) $event->invoiceId ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
-			ZKP_Logger::debug( sprintf( 'webhook %s: duplicate delivery, skipped', $event->id ) );
+		if ( ! ZEROKYC_Event_Store::claim( $event->id, $event->type, (string) $event->invoiceId ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SDK DTO property
+			ZEROKYC_Logger::debug( sprintf( 'webhook %s: duplicate delivery, skipped', $event->id ) );
 			return new WP_REST_Response( array( 'received' => true ), 200 );
 		}
 
-		ZKP_Order_Service::handle_event( $event );
+		ZEROKYC_Order_Service::handle_event( $event );
 
 		return new WP_REST_Response( array( 'received' => true ), 200 );
 	}

@@ -32,7 +32,7 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SLUG: zerokyc-pay
           ASSETS_DIR: .wordpress-org
-          VERSION_CONSTANT: ZKP_VERSION
+          VERSION_CONSTANT: ZEROKYC_VERSION
 
       - name: Build release zip
         run: |

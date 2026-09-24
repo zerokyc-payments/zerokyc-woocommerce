@@ -9,16 +9,16 @@
 #        b. with double-check off -> order completes
 #
 # Usage:
-#   ZKP_E2E_API_KEY=pk_test_... ZKP_E2E_WEBHOOK_SECRET=whsec_... bin/e2e-sandbox.sh
+#   ZEROKYC_E2E_API_KEY=pk_test_... ZEROKYC_E2E_WEBHOOK_SECRET=whsec_... bin/e2e-sandbox.sh
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-API_KEY="${ZKP_E2E_API_KEY:?set ZKP_E2E_API_KEY=pk_test_...}"
-WEBHOOK_SECRET="${ZKP_E2E_WEBHOOK_SECRET:?set ZKP_E2E_WEBHOOK_SECRET=whsec_...}"
-URL="${ZKP_E2E_URL:-http://localhost:8080}"
+API_KEY="${ZEROKYC_E2E_API_KEY:?set ZEROKYC_E2E_API_KEY=pk_test_...}"
+WEBHOOK_SECRET="${ZEROKYC_E2E_WEBHOOK_SECRET:?set ZEROKYC_E2E_WEBHOOK_SECRET=whsec_...}"
+URL="${ZEROKYC_E2E_URL:-http://localhost:8080}"
 
-wp() { docker compose run --rm -e ZKP_E2E_API_KEY -e ZKP_E2E_WEBHOOK_SECRET -e ZKP_INV -e ZKP_EVENT_ID wpcli wp "$@"; }
+wp() { docker compose run --rm -e ZEROKYC_E2E_API_KEY -e ZEROKYC_E2E_WEBHOOK_SECRET -e ZEROKYC_INV -e ZEROKYC_EVENT_ID wpcli wp "$@"; }
 
 echo "==> starting site"
 docker compose up -d db wp
@@ -38,18 +38,18 @@ echo "==> gateway settings (sandbox)"
 wp eval "
 update_option( 'woocommerce_zerokyc_pay_settings', array(
     'enabled' => 'yes',
-    'api_key' => getenv('ZKP_E2E_API_KEY'),
-    'webhook_secret' => getenv('ZKP_E2E_WEBHOOK_SECRET'),
+    'api_key' => getenv('ZEROKYC_E2E_API_KEY'),
+    'webhook_secret' => getenv('ZEROKYC_E2E_WEBHOOK_SECRET'),
     'double_check' => 'yes',
     'payment_currency' => 'any',
     'ttl_minutes' => 360,
 ) );
-delete_option( '_zkp_e2e_state' );
+delete_option( '_zerokyc_e2e_state' );
 " >/dev/null
 
 echo "==> test connection (ping)"
 wp eval '
-$ping = ZKP_Gateway::sdk()->ping();
+$ping = ZEROKYC_Gateway::sdk()->ping();
 printf("ping: %s / chain_mode=%s\n", $ping["status"] ?? "?", $ping["chain_mode"] ?? "?");
 '
 
@@ -73,7 +73,7 @@ echo "==> process_payment (real sandbox invoice)"
 CHECKOUT=$(wp eval "
 \$r = null;
 foreach ( WC()->payment_gateways()->payment_gateways as \$gw ) {
-    if ( \$gw instanceof ZKP_Gateway ) { \$r = \$gw; break; }
+    if ( \$gw instanceof ZEROKYC_Gateway ) { \$r = \$gw; break; }
 }
 \$res = \$r->process_payment( $ORDER_ID );
 echo \$res['redirect'] ?? 'FAILED';
@@ -84,27 +84,27 @@ echo "checkout url: $CHECKOUT"
 HTTP=$(curl -s -o /dev/null -w '%{http_code}' "$CHECKOUT")
 echo "hosted checkout HTTP: $HTTP"
 
-INVOICE_ID=$(wp eval "echo (string) wc_get_order( $ORDER_ID )->get_meta( '_zkp_invoice_id' );" | tr -d '\r\n')
+INVOICE_ID=$(wp eval "echo (string) wc_get_order( $ORDER_ID )->get_meta( '_zerokyc_invoice_id' );" | tr -d '\r\n')
 echo "invoice: $INVOICE_ID"
 
-export ZKP_INV="$INVOICE_ID"
+export ZEROKYC_INV="$INVOICE_ID"
 sign_and_post() {
-    export ZKP_EVENT_ID="evt_e2e_${1:-a}"
+    export ZEROKYC_EVENT_ID="evt_e2e_${1:-a}"
     wp eval '
 $body = json_encode(array(
-    "id" => getenv("ZKP_EVENT_ID"),
+    "id" => getenv("ZEROKYC_EVENT_ID"),
     "type" => "payment.confirmed",
-    "invoice_id" => getenv("ZKP_INV"),
-    "data" => array( "invoice_id" => getenv("ZKP_INV"), "amount" => "19.9", "asset" => "USDT_TRON" ),
+    "invoice_id" => getenv("ZEROKYC_INV"),
+    "data" => array( "invoice_id" => getenv("ZEROKYC_INV"), "amount" => "19.9", "asset" => "USDT_TRON" ),
 ));
-echo (new ZeroKYC\Webhook\WebhookVerifier( getenv("ZKP_E2E_WEBHOOK_SECRET") ))->sign( $body );
+echo (new ZeroKYC\Webhook\WebhookVerifier( getenv("ZEROKYC_E2E_WEBHOOK_SECRET") ))->sign( $body );
 ' | tr -d '\r\n' > /tmp/zkp-e2e-sig.txt
     local SIG; SIG=$(cat /tmp/zkp-e2e-sig.txt)
 
-    BODY='{"id":"'"$ZKP_EVENT_ID"'","type":"payment.confirmed","invoice_id":"'"$INVOICE_ID"'","data":{"invoice_id":"'"$INVOICE_ID"'","amount":"19.9","asset":"USDT_TRON"}}'
+    BODY='{"id":"'"$ZEROKYC_EVENT_ID"'","type":"payment.confirmed","invoice_id":"'"$INVOICE_ID"'","data":{"invoice_id":"'"$INVOICE_ID"'","amount":"19.9","asset":"USDT_TRON"}}'
 
     curl -s -o /dev/null -w 'webhook HTTP %{http_code}\n' \
-        -X POST "$URL/wp-json/zkp/v1/webhook" \
+        -X POST "$URL/wp-json/zerokyc/v1/webhook" \
         -H "Content-Type: application/json" \
         -H "X-Zkp-Signature: $SIG" \
         --data-binary "$BODY"
@@ -121,7 +121,7 @@ sign_and_post b
 wp eval "echo 'status after B: ' . wc_get_order( $ORDER_ID )->get_status() . PHP_EOL;"
 wp eval "
 \$o = wc_get_order( $ORDER_ID );
-echo 'paid_asset: ' . \$o->get_meta('_zkp_paid_asset') . PHP_EOL;
+echo 'paid_asset: ' . \$o->get_meta('_zerokyc_paid_asset') . PHP_EOL;
 echo 'notes:' . PHP_EOL;
 foreach ( wc_get_order_notes( array( 'order_id' => $ORDER_ID ) ) as \$n ) { echo '  - ' . \$n->content . PHP_EOL; }
 "

@@ -1,5 +1,5 @@
 === ZeroKYC Pay ===
-Contributors: zerokypayments
+Contributors: zerokycpayments
 Tags: payment-gateway, cryptocurrency, usdt, bitcoin, woocommerce
 Requires at least: 6.5
 Tested up to: 7.1

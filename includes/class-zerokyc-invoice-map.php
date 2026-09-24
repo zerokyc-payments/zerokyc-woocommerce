@@ -13,7 +13,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-final class ZKP_Invoice_Map {
+final class ZEROKYC_Invoice_Map {
 
 	public static function table(): string {
 		global $wpdb;

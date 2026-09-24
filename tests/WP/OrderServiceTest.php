@@ -10,8 +10,8 @@ class OrderServiceTest extends WP_UnitTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		ZKP_Event_Store::create_table();
-		ZKP_Invoice_Map::create_table();
+		ZEROKYC_Event_Store::create_table();
+		ZEROKYC_Invoice_Map::create_table();
 		update_option(
 			'woocommerce_zerokyc_pay_settings',
 			array(
@@ -33,10 +33,10 @@ class OrderServiceTest extends WP_UnitTestCase {
 		$order->set_currency( 'USD' );
 		$order->calculate_totals();
 		$order->update_status( 'on-hold', 'setup' );
-		$order->update_meta_data( '_zkp_invoice_id', $invoice_id );
+		$order->update_meta_data( '_zerokyc_invoice_id', $invoice_id );
 		$order->save();
 
-		ZKP_Invoice_Map::remember( $invoice_id, $order->get_id() );
+		ZEROKYC_Invoice_Map::remember( $invoice_id, $order->get_id() );
 
 		return $order;
 	}
@@ -69,17 +69,17 @@ class OrderServiceTest extends WP_UnitTestCase {
 	public function test_find_by_invoice(): void {
 		$order = $this->make_order( 'inv_find_me' );
 
-		$found = ZKP_Order_Service::find_by_invoice( 'inv_find_me' );
+		$found = ZEROKYC_Order_Service::find_by_invoice( 'inv_find_me' );
 		$this->assertInstanceOf( WC_Order::class, $found );
 		$this->assertSame( $order->get_id(), $found->get_id() );
 
-		$this->assertNull( ZKP_Order_Service::find_by_invoice( 'inv_unknown' ) );
+		$this->assertNull( ZEROKYC_Order_Service::find_by_invoice( 'inv_unknown' ) );
 	}
 
 	public function test_underpaid_event_keeps_order_on_hold_and_notes(): void {
 		$order = $this->make_order();
 
-		ZKP_Order_Service::handle_event(
+		ZEROKYC_Order_Service::handle_event(
 			$this->event( 'payment.underpaid', 'inv_os_001', array( 'amount' => '9.0', 'asset' => 'USDT_TRON' ) )
 		);
 
@@ -91,8 +91,8 @@ class OrderServiceTest extends WP_UnitTestCase {
 	public function test_detected_event_notes_once(): void {
 		$order = $this->make_order( 'inv_os_detect' );
 
-		ZKP_Order_Service::handle_event( $this->event( 'payment.detected', 'inv_os_detect' ) );
-		ZKP_Order_Service::handle_event( $this->event( 'payment.detected', 'inv_os_detect' ) );
+		ZEROKYC_Order_Service::handle_event( $this->event( 'payment.detected', 'inv_os_detect' ) );
+		ZEROKYC_Order_Service::handle_event( $this->event( 'payment.detected', 'inv_os_detect' ) );
 
 		$notes = array_filter(
 			wc_get_order_notes( array( 'order_id' => $order->get_id() ) ),
@@ -104,7 +104,7 @@ class OrderServiceTest extends WP_UnitTestCase {
 	public function test_confirmed_event_with_unknown_invoice_logs_and_skips(): void {
 		$order = $this->make_order();
 
-		ZKP_Order_Service::handle_event(
+		ZEROKYC_Order_Service::handle_event(
 			$this->event( 'payment.confirmed', 'inv_someone_else', array( 'amount' => '10.0', 'asset' => 'USDT_TRON' ) )
 		);
 
@@ -143,7 +143,7 @@ class OrderServiceTest extends WP_UnitTestCase {
 		);
 
 		$order = $this->make_order();
-		ZKP_Order_Service::handle_event(
+		ZEROKYC_Order_Service::handle_event(
 			$this->event( 'payment.confirmed', 'inv_os_001', array( 'amount' => '10.0', 'asset' => 'USDT_TRON' ) )
 		);
 
@@ -182,7 +182,7 @@ class OrderServiceTest extends WP_UnitTestCase {
 		);
 
 		$order = $this->make_order();
-		ZKP_Order_Service::handle_event(
+		ZEROKYC_Order_Service::handle_event(
 			$this->event( 'payment.confirmed', 'inv_os_001', array( 'amount' => '10.0', 'asset' => 'USDT_TRON' ) )
 		);
 
@@ -201,7 +201,7 @@ class OrderServiceTest extends WP_UnitTestCase {
 		);
 
 		$order = $this->make_order();
-		ZKP_Order_Service::handle_event( $this->event( 'invoice.expired', 'inv_os_001' ) );
+		ZEROKYC_Order_Service::handle_event( $this->event( 'invoice.expired', 'inv_os_001' ) );
 
 		$order = wc_get_order( $order->get_id() );
 		$this->assertTrue( $order->has_status( 'on-hold' ) );
@@ -210,7 +210,7 @@ class OrderServiceTest extends WP_UnitTestCase {
 	public function test_apply_invoice_confirmed_completes_order(): void {
 		$order = $this->make_order();
 
-		ZKP_Order_Service::apply_invoice(
+		ZEROKYC_Order_Service::apply_invoice(
 			$order,
 			self::invoice( 'confirmed', 'inv_os_001', array( 'paid_amount' => '10.0', 'paid_asset' => 'USDT_TRON' ) )
 		);
@@ -222,7 +222,7 @@ class OrderServiceTest extends WP_UnitTestCase {
 	public function test_apply_invoice_expired_cancels_order(): void {
 		$order = $this->make_order();
 
-		ZKP_Order_Service::apply_invoice( $order, self::invoice( 'expired', 'inv_os_001' ) );
+		ZEROKYC_Order_Service::apply_invoice( $order, self::invoice( 'expired', 'inv_os_001' ) );
 
 		$order = wc_get_order( $order->get_id() );
 		$this->assertTrue( $order->has_status( 'cancelled' ) );

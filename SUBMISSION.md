@@ -91,5 +91,5 @@ zerokyc-payments.com, сервис принадлежит тебе. Слаг м�
 | Ассеты каталога | `.wordpress-org/` (icon.svg/png, banner 772x250 + retina) |
 | Тесты / линт | `docker compose run --rm tooling phpunit` / `phpcs` |
 | Официальная проверка | Plugin Check: `wp plugin install plugin-check && wp plugin check zerokyc-pay` |
-| E2E на sandbox | `ZKP_E2E_API_KEY=… ZKP_E2E_WEBHOOK_SECRET=… bin/e2e-sandbox.sh` |
+| E2E на sandbox | `ZEROKYC_E2E_API_KEY=… ZEROKYC_E2E_WEBHOOK_SECRET=… bin/e2e-sandbox.sh` |
 | Спека/план (workspace-репо) | `docs/superpowers/specs/2026-09-12-zerokyc-woocommerce-plugin-design.md` |

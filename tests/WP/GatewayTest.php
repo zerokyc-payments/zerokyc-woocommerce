@@ -18,14 +18,14 @@ class GatewayTest extends WP_UnitTestCase {
 	}
 
 	public function test_gateway_is_registered_with_woocommerce(): void {
-		$this->assertInstanceOf( ZKP_Gateway::class, zkp_test_gateway() );
+		$this->assertInstanceOf( ZEROKYC_Gateway::class, zerokyc_test_gateway() );
 	}
 
 	public function test_unavailable_without_api_key(): void {
 		update_option( 'woocommerce_zerokyc_pay_settings', array( 'enabled' => 'yes' ) );
 
 		// A fresh instance: registered instances cache settings at construction.
-		$gateway = new ZKP_Gateway();
+		$gateway = new ZEROKYC_Gateway();
 		$this->assertFalse( $gateway->is_available() );
 	}
 
@@ -35,7 +35,7 @@ class GatewayTest extends WP_UnitTestCase {
 	public function test_availability_depends_on_shop_currency( string $currency, bool $expected ): void {
 		update_option( 'woocommerce_currency', $currency );
 
-		$gateway = new ZKP_Gateway();
+		$gateway = new ZEROKYC_Gateway();
 		$this->assertSame( $expected, $gateway->is_available() );
 	}
 
@@ -51,18 +51,18 @@ class GatewayTest extends WP_UnitTestCase {
 
 	public function test_webhook_url_falls_back_without_pretty_permalinks(): void {
 		$this->set_permalink_structure( '' );
-		$url = ZKP_Gateway::webhook_url();
-		$this->assertStringContainsString( 'rest_route=/zkp/v1/webhook', $url );
+		$url = ZEROKYC_Gateway::webhook_url();
+		$this->assertStringContainsString( 'rest_route=/zerokyc/v1/webhook', $url );
 	}
 
 	public function test_webhook_url_pretty(): void {
 		$this->set_permalink_structure( '/%postname%/' );
-		$url = ZKP_Gateway::webhook_url();
-		$this->assertStringEndsWith( '/wp-json/zkp/v1/webhook', $url );
+		$url = ZEROKYC_Gateway::webhook_url();
+		$this->assertStringEndsWith( '/wp-json/zerokyc/v1/webhook', $url );
 	}
 
 	public function test_sdk_derives_sandbox_from_key_prefix(): void {
-		$zkp = ZKP_Gateway::sdk();
+		$zkp = ZEROKYC_Gateway::sdk();
 		$this->assertTrue( $zkp->config->isSandbox() );
 		$this->assertSame( 'https://api.zerokyc-payments.com', $zkp->config->baseUrl );
 	}
@@ -73,7 +73,7 @@ class GatewayTest extends WP_UnitTestCase {
 			array( 'enabled' => 'yes', 'api_key' => 'pk_live_key_gateway_test' )
 		);
 
-		$zkp = ZKP_Gateway::sdk();
+		$zkp = ZEROKYC_Gateway::sdk();
 		$this->assertFalse( $zkp->config->isSandbox() );
 	}
 }

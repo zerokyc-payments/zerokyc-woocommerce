@@ -71,7 +71,7 @@ The environment (Sandbox or Production) is detected automatically from the API k
 1. In your ZeroKYC console, navigate to **Webhooks → Add endpoint**.
 2. Set the endpoint URL to:
    ```
-   https://your-domain.com/wp-json/zkp/v1/webhook
+   https://your-domain.com/wp-json/zerokyc/v1/webhook
    ```
 3. Subscribe to all payment events (`payment.confirmed`, `payment.underpaid`, `invoice.expired`).
 4. Copy the webhook secret (`whsec_...`) and paste it into the plugin settings in WooCommerce.
@@ -88,7 +88,7 @@ The environment (Sandbox or Production) is detected automatically from the API k
 1. **Checkout:** The customer selects ZeroKYC Pay and clicks Place Order.
 2. **Invoice creation:** The gateway issues an idempotent request to ZeroKYC API and redirects the user to the secure hosted checkout.
 3. **Payment:** Customer pays with their chosen cryptocurrency.
-4. **Webhook:** ZeroKYC delivers a signed webhook to `/wp-json/zkp/v1/webhook`.
+4. **Webhook:** ZeroKYC delivers a signed webhook to `/wp-json/zerokyc/v1/webhook`.
 5. **Verification:** The plugin validates the HMAC-SHA256 signature, ensures replay safety via `{prefix}zerokyc_events`, optionally performs a server-side double check, and marks the WooCommerce order as `processing`.
 
 ## Development & testing
@@ -111,7 +111,7 @@ docker compose run --rm tooling phpcs
 Run the automated E2E sandbox script against a local WordPress instance:
 
 ```bash
-ZKP_E2E_API_KEY=pk_test_... ZKP_E2E_WEBHOOK_SECRET=whsec_... ./bin/e2e-sandbox.sh
+ZEROKYC_E2E_API_KEY=pk_test_... ZEROKYC_E2E_WEBHOOK_SECRET=whsec_... ./bin/e2e-sandbox.sh
 ```
 
 ## Security

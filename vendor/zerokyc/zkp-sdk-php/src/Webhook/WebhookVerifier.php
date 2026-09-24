@@ -20,7 +20,7 @@ use ZeroKYC\Exception\WebhookVerificationException;
  *
  *     $event = (new WebhookVerifier($secret))->verify(
  *         file_get_contents('php://input'),
- *         $_SERVER['HTTP_X_ZKP_SIGNATURE'] ?? ''
+ *         $_SERVER['HTTP_X_ZEROKYC_SIGNATURE'] ?? ''
  *     );
  */
 final class WebhookVerifier

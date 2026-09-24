@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-final class ZKP_Cron {
+final class ZEROKYC_Cron {
 
 	public const HOOK    = 'zerokyc_poll_pending';
 	public const SLUG    = 'zerokyc_15min';
@@ -46,16 +46,16 @@ final class ZKP_Cron {
 	 * Polls open invoices and applies status transitions, mirroring webhooks.
 	 */
 	public static function poll(): void {
-		$candidates = ZKP_Invoice_Map::order_ids_since( gmdate( 'Y-m-d H:i:s', time() - self::WINDOW ) );
+		$candidates = ZEROKYC_Invoice_Map::order_ids_since( gmdate( 'Y-m-d H:i:s', time() - self::WINDOW ) );
 		if ( array() === $candidates ) {
 			return;
 		}
 		$candidates = array_slice( $candidates, 0 - self::BATCH );
 
 		try {
-			$zkp = ZKP_Gateway::sdk();
+			$zkp = ZEROKYC_Gateway::sdk();
 		} catch ( RuntimeException $e ) {
-			ZKP_Logger::warning( 'cron: cannot build SDK client - ' . $e->getMessage() );
+			ZEROKYC_Logger::warning( 'cron: cannot build SDK client - ' . $e->getMessage() );
 			return;
 		}
 
@@ -64,17 +64,17 @@ final class ZKP_Cron {
 			if ( ! $order instanceof WC_Order || ! $order->has_status( self::STATUS ) ) {
 				continue;
 			}
-			$invoice_id = (string) $order->get_meta( '_zkp_invoice_id' );
+			$invoice_id = (string) $order->get_meta( '_zerokyc_invoice_id' );
 			if ( '' === $invoice_id ) {
 				continue;
 			}
 
 			try {
-				ZKP_Order_Service::apply_invoice( $order, $zkp->getInvoice( $invoice_id ) );
+				ZEROKYC_Order_Service::apply_invoice( $order, $zkp->getInvoice( $invoice_id ) );
 			} catch ( ZeroKYC\Exception\NetworkException $e ) {
 				continue; // next tick retries
 			} catch ( ZeroKYC\Exception\ZeroKYCException $e ) {
-				ZKP_Logger::warning( sprintf( 'cron: invoice %s - %s', $invoice_id, $e->getMessage() ) );
+				ZEROKYC_Logger::warning( sprintf( 'cron: invoice %s - %s', $invoice_id, $e->getMessage() ) );
 			}
 		}
 	}

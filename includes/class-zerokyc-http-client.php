@@ -14,7 +14,7 @@ use ZeroKYC\Exception\NetworkException;
 use ZeroKYC\Http\HttpClientInterface;
 use ZeroKYC\Http\Response;
 
-final class ZKP_Http_Client implements HttpClientInterface {
+final class ZEROKYC_Http_Client implements HttpClientInterface {
 
 	/**
 	 * @inheritDoc

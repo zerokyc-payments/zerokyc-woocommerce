@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-final class ZKP_Logger {
+final class ZEROKYC_Logger {
 
 	private const SOURCE = 'zerokyc-pay';
 

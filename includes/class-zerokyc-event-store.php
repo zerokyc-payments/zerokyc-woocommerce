@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 
 use ZeroKYC\Idempotency\EventStoreInterface;
 
-final class ZKP_Event_Store implements EventStoreInterface {
+final class ZEROKYC_Event_Store implements EventStoreInterface {
 
 	public static function table(): string {
 		global $wpdb;

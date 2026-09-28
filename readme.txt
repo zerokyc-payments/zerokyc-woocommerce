@@ -1,4 +1,4 @@
-=== ZeroKYC Pay ===
+=== ZeroKYC – Crypto Payments for WooCommerce ===
 Contributors: zerokycpayments
 Tags: payment-gateway, cryptocurrency, usdt, bitcoin, woocommerce
 Requires at least: 6.5

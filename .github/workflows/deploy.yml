@@ -10,6 +10,8 @@ jobs:
     name: SVN deploy (tag ${{ github.ref_name }})
     runs-on: ubuntu-latest
     if: github.repository == 'zerokyc-payments/zerokyc-woocommerce'
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 

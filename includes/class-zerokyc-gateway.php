@@ -31,14 +31,15 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 	 * choose at checkout.
 	 */
 	public const PAYMENT_CURRENCIES = array(
-		'any'           => 'Let the buyer choose (USDT, USDC, BTC, XMR, TON)',
-		'USDT_TRON'     => 'USDT (TRC-20)',
-		'USDC_POLYGON'  => 'USDC (Polygon)',
-		'USDC_ARBITRUM' => 'USDC (Arbitrum)',
-		'USDT_POLYGON'  => 'USDT (Polygon)',
-		'USDT_ARBITRUM' => 'USDT (Arbitrum)',
-		'TON'           => 'TON',
-		'USDT_TON'      => 'USDT (TON)',
+		'any'            => 'Let the buyer choose (USDT, USDC, ETH, BTC, XMR, TON)',
+		'USDT_TRON'      => 'USDT (TRC-20)',
+		'ETH'            => 'Ethereum (native)',
+		'USDT_ETHEREUM'  => 'USDT (Ethereum)',
+		'USDC_POLYGON'   => 'USDC (Polygon)',
+		'USDC_ARBITRUM'  => 'USDC (Arbitrum)',
+		'USDT_POLYGON'   => 'USDT (Polygon)',
+		'TON'            => 'TON',
+		'USDT_TON'       => 'USDT (TON)',
 	);
 
 	public function __construct() {

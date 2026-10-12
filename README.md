@@ -25,7 +25,7 @@ The same public contract and security guarantees as the official SDK family:
 
 ## Supported assets
 
-ETH, USDT (Ethereum ERC-20), USDT (TRC-20), USDC/USDT (Polygon, Arbitrum), BTC, XMR, TON, USDT-TON.
+USDT on four networks (TRC-20, BEP-20 on BSC, ERC-20 on Ethereum, TON jetton), USDC/USDT (Polygon, Arbitrum), native ETH, native BNB, native TRX, LTC, BTC, XMR and native TON.
 You can pin a specific asset (e.g. `USDT_TRON`) in settings or leave it as `any` (default) to let the customer select at checkout.
 
 ## Requirements

@@ -27,7 +27,7 @@ msgstr ""
 
 #. Description of the plugin
 #: zerokyc-pay.php
-msgid "Accept crypto payments (USDT, USDC, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC, non-custodial option, webhooks verified by HMAC signature."
+msgid "Accept crypto payments (USDT, USDC, ETH, BNB, TRX, LTC, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC, non-custodial option, webhooks verified by HMAC signature."
 msgstr ""
 
 #. Author of the plugin
@@ -64,7 +64,7 @@ msgid "Payment method title the buyer sees at checkout."
 msgstr ""
 
 #: includes/class-zkp-gateway.php:75
-msgid "Cryptocurrency (USDT, BTC, XMR, TON…)"
+msgid "Cryptocurrency (USDT, ETH, BNB, BTC, XMR, TON…)"
 msgstr ""
 
 #: includes/class-zkp-gateway.php:79
@@ -192,4 +192,20 @@ msgstr ""
 #: includes/class-zkp-plugin.php:41
 #, php-format
 msgid "%s requires WooCommerce to be installed and activated."
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "USDT (BSC, BEP-20)"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "BNB (native, BSC)"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "TRON (native)"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "Litecoin"
 msgstr ""

@@ -27,7 +27,7 @@ msgstr ""
 
 #. Description of the plugin
 #: zerokyc-pay.php
-msgid "Accept crypto payments (USDT, USDC, ETH, BNB, TRX, LTC, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC, non-custodial option, webhooks verified by HMAC signature."
+msgid "Accept crypto payments (USDT, USDC, ETH, BNB, SOL, TRX, LTC, DOGE, BCH, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC, non-custodial option, webhooks verified by HMAC signature."
 msgstr ""
 
 #. Author of the plugin
@@ -64,7 +64,7 @@ msgid "Payment method title the buyer sees at checkout."
 msgstr ""
 
 #: includes/class-zkp-gateway.php:75
-msgid "Cryptocurrency (USDT, ETH, BNB, BTC, XMR, TON…)"
+msgid "Cryptocurrency (USDT, ETH, BNB, SOL, BTC, XMR, TON…)"
 msgstr ""
 
 #: includes/class-zkp-gateway.php:79
@@ -208,4 +208,28 @@ msgstr ""
 
 #: includes/class-zerokyc-gateway.php
 msgid "Litecoin"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "USDT (Arbitrum)"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "Dogecoin"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "Bitcoin Cash"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "Solana (native)"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "USDT (Solana)"
+msgstr ""
+
+#: includes/class-zerokyc-gateway.php
+msgid "USDC (Solana)"
 msgstr ""

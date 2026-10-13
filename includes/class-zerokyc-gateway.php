@@ -31,9 +31,10 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 	 * choose at checkout.
 	 */
 	public const PAYMENT_CURRENCIES = array(
-		'any'           => 'Let the buyer choose (USDT, USDC, ETH, BNB, TRX, LTC, BTC, XMR, TON)',
+		'any'           => 'Let the buyer choose (USDT, USDC, ETH, BNB, SOL, DOGE, TRX, LTC, BCH, BTC, XMR, TON)',
 		'USDT_TRON'     => 'USDT (TRC-20)',
 		'USDT_BSC'      => 'USDT (BSC, BEP-20)',
+		'USDT_ARBITRUM' => 'USDT (Arbitrum)',
 		'ETH'           => 'Ethereum (native)',
 		'USDT_ETHEREUM' => 'USDT (Ethereum)',
 		'USDC_POLYGON'  => 'USDC (Polygon)',
@@ -44,6 +45,11 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 		'BNB'           => 'BNB (native, BSC)',
 		'TRX'           => 'TRON (native)',
 		'LTC'           => 'Litecoin',
+		'DOGE'          => 'Dogecoin',
+		'BCH'           => 'Bitcoin Cash',
+		'SOL'           => 'Solana (native)',
+		'USDT_SOL'      => 'USDT (Solana)',
+		'USDC_SOL'      => 'USDC (Solana)',
 	);
 
 	public function __construct() {
@@ -77,7 +83,7 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Title', 'zerokyc-pay' ),
 				'type'        => 'text',
 				'description' => __( 'Payment method title the buyer sees at checkout.', 'zerokyc-pay' ),
-				'default'     => __( 'Cryptocurrency (USDT, ETH, BNB, BTC, XMR, TON…)', 'zerokyc-pay' ),
+				'default'     => __( 'Cryptocurrency (USDT, ETH, BNB, SOL, BTC, XMR, TON…)', 'zerokyc-pay' ),
 				'desc_tip'    => true,
 			),
 			'description'      => array(

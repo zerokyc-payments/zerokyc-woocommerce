@@ -4,11 +4,11 @@ Tags: payment-gateway, cryptocurrency, usdt, bitcoin, woocommerce
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
-Accept crypto payments (USDT, USDC, ETH, BNB, TRX, LTC, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC for your buyers.
+Accept crypto payments (USDT, USDC, ETH, BNB, SOL, TRX, LTC, DOGE, BCH, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC for your buyers.
 
 == Description ==
 
@@ -84,6 +84,10 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 
 == Changelog ==
 
+= 1.2.0 =
+* New payment assets: USDT (Arbitrum), Dogecoin, Bitcoin Cash, and the Solana trio — native SOL, USDT and USDC.
+* Asset list in settings refreshed to the full 20-asset lineup.
+
 = 1.1.0 =
 * New payment assets: USDT (BEP-20) and native BNB on BNB Smart Chain, native TRX on TRON, and Litecoin.
 * Asset list in settings refreshed to the full 14-asset lineup (USDT on four networks, USDC, ETH, BNB, TRX, LTC, BTC, XMR, TON).
@@ -92,6 +96,9 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 * Initial release: redirect checkout, HMAC-verified webhooks with replay protection, invoice polling safety net, sandbox/production modes, HPOS compatibility.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+New assets: USDT (Arbitrum), DOGE, BCH and Solana (SOL, USDT, USDC). No settings migration needed.
 
 = 1.1.0 =
 New assets: USDT BEP-20, BNB, TRX and LTC. No settings migration needed — pick them in the gateway settings.

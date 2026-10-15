@@ -4,7 +4,7 @@ Tags: payment-gateway, cryptocurrency, usdt, bitcoin, woocommerce
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -84,6 +84,10 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 
 == Changelog ==
 
+= 1.3.0 =
+* New payment asset: XRP on the XRP Ledger — validated-ledger finality, ~12 s confirmations.
+* Asset list in settings refreshed to the full 21-asset lineup.
+
 = 1.2.0 =
 * New payment assets: USDT (Arbitrum), Dogecoin, Bitcoin Cash, and the Solana trio — native SOL, USDT and USDC.
 * Asset list in settings refreshed to the full 20-asset lineup.
@@ -96,6 +100,9 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 * Initial release: redirect checkout, HMAC-verified webhooks with replay protection, invoice polling safety net, sandbox/production modes, HPOS compatibility.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+New asset: XRP (XRP Ledger). No settings migration needed.
 
 = 1.2.0 =
 New assets: USDT (Arbitrum), DOGE, BCH and Solana (SOL, USDT, USDC). No settings migration needed.

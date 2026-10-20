@@ -85,8 +85,8 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 == Changelog ==
 
 = 1.3.0 =
-* New payment asset: XRP on the XRP Ledger — validated-ledger finality, ~12 s confirmations.
-* Asset list in settings refreshed to the full 21-asset lineup.
+* New payment assets: XRP on the XRP Ledger (validated-ledger finality, ~12 s) and native NEAR on NEAR Protocol (named accounts, ~3 s finality).
+* Asset list in settings refreshed to the full 22-asset lineup.
 
 = 1.2.0 =
 * New payment assets: USDT (Arbitrum), Dogecoin, Bitcoin Cash, and the Solana trio — native SOL, USDT and USDC.
@@ -102,7 +102,7 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 == Upgrade Notice ==
 
 = 1.3.0 =
-New asset: XRP (XRP Ledger). No settings migration needed.
+New assets: XRP (XRP Ledger) and NEAR. No settings migration needed.
 
 = 1.2.0 =
 New assets: USDT (Arbitrum), DOGE, BCH and Solana (SOL, USDT, USDC). No settings migration needed.

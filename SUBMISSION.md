@@ -23,7 +23,7 @@ WordPress.org генерирует постоянный слаг из `Plugin Na
 4. Plugin description (вставь как есть):
 
    > ZeroKYC Pay is a crypto payment gateway for WooCommerce. The buyer pays in
-   > USDT, USDC, ETH, BNB, SOL, XRP, TRX, LTC, DOGE, BCH, BTC, XMR or TON through the ZeroKYC hosted checkout — no KYC
+   > USDT, USDC, ETH, BNB, SOL, XRP, NEAR, TRX, LTC, DOGE, BCH, BTC, XMR or TON through the ZeroKYC hosted checkout — no KYC
    > for buyers, no wallet keys on the merchant server. Orders are completed by
    > HMAC-SHA256 verified webhooks with replay protection and an optional
    > server-side double check; a WP-Cron job reconciles lost webhooks every 15

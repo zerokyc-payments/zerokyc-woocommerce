@@ -27,7 +27,7 @@ msgstr ""
 
 #. Description of the plugin
 #: zerokyc-pay.php
-msgid "Accept crypto payments (USDT, USDC, ETH, BNB, SOL, TRX, LTC, DOGE, BCH, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC, non-custodial option, webhooks verified by HMAC signature."
+msgid "Accept crypto payments (USDT, USDC, ETH, BNB, SOL, XRP, TRX, LTC, DOGE, BCH, BTC, XMR, TON) in WooCommerce through the ZeroKYC Pay hosted checkout. No KYC, non-custodial option, webhooks verified by HMAC signature."
 msgstr ""
 
 #. Author of the plugin

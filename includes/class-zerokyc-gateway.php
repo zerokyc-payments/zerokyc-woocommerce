@@ -31,7 +31,7 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 	 * choose at checkout.
 	 */
 	public const PAYMENT_CURRENCIES = array(
-		'any'           => 'Let the buyer choose (USDT, USDC, ETH, BNB, SOL, DOGE, TRX, LTC, BCH, BTC, XMR, TON)',
+		'any'           => 'Let the buyer choose (USDT, USDC, ETH, BNB, SOL, XRP, DOGE, TRX, LTC, BCH, BTC, XMR, TON)',
 		'USDT_TRON'     => 'USDT (TRC-20)',
 		'USDT_BSC'      => 'USDT (BSC, BEP-20)',
 		'USDT_ARBITRUM' => 'USDT (Arbitrum)',
@@ -50,6 +50,8 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 		'SOL'           => 'Solana (native)',
 		'USDT_SOL'      => 'USDT (Solana)',
 		'USDC_SOL'      => 'USDC (Solana)',
+
+		'XRP'           => 'XRP (XRP Ledger)',
 	);
 
 	public function __construct() {

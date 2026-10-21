@@ -13,4 +13,5 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) || ! defined( 'ABSPATH' ) ) {
 }
 
 delete_option( 'woocommerce_zerokyc_pay_settings' );
+delete_option( 'zerokyc_assets_fallback' );
 wp_clear_scheduled_hook( 'zerokyc_poll_pending' );

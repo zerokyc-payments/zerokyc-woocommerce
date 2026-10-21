@@ -4,7 +4,7 @@ Tags: payment-gateway, cryptocurrency, usdt, bitcoin, woocommerce
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -84,6 +84,10 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 
 == Changelog ==
 
+= 1.4.0 =
+* Dynamic asset list: the settings dropdown now reads the platform's asset catalog (GET /v1/assets) and auto-refreshes — new coins appear without a plugin release.
+* Resilient caching: 12-hour cache, persistent last-known-good fallback, and a compiled-in snapshot for first run / API outages; an unavailable catalog never blocks checkout.
+
 = 1.3.0 =
 * New payment assets: XRP on the XRP Ledger (validated-ledger finality, ~12 s) and native NEAR on NEAR Protocol (named accounts, ~3 s finality).
 * Asset list in settings refreshed to the full 22-asset lineup.
@@ -100,6 +104,9 @@ The built-in cron poller reconciles orders with the invoice state every 15 minut
 * Initial release: redirect checkout, HMAC-verified webhooks with replay protection, invoice polling safety net, sandbox/production modes, HPOS compatibility.
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Asset list now syncs from the platform automatically. No settings migration needed.
 
 = 1.3.0 =
 New assets: XRP (XRP Ledger) and NEAR. No settings migration needed.

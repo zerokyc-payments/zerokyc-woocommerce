@@ -84,7 +84,7 @@ final class ZEROKYC_Asset_Repository {
 			if ( empty( $asset['asset_id'] ) ) {
 				continue;
 			}
-			$label                   = $asset['display'] ?? $asset['asset_id'];
+			$label                      = $asset['display'] ?? $asset['asset_id'];
 			$list[ $asset['asset_id'] ] = $label;
 		}
 		if ( array() === $list ) {

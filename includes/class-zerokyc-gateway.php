@@ -78,8 +78,8 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 		// the select may have been rendered from an older catalog: anything
 		// not in the CURRENT list (live fetch first) resets to 'any'
 		$settings = self::settings();
-		$selected     = (string) ( $settings['payment_currency'] ?? 'any' );
-		$valid        = ZEROKYC_Asset_Repository::payment_currencies( true );
+		$selected = (string) ( $settings['payment_currency'] ?? 'any' );
+		$valid    = ZEROKYC_Asset_Repository::payment_currencies( true );
 		if ( 'any' !== $selected && ! isset( $valid[ $selected ] ) ) {
 			$settings['payment_currency'] = 'any';
 			update_option( $this->get_option_key(), $settings );

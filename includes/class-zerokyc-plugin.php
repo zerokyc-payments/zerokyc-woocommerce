@@ -24,6 +24,7 @@ final class ZEROKYC_Plugin {
 	 * Hook everything. Called once from the main plugin file.
 	 */
 	public static function boot(): void {
+		add_action( 'admin_init', array( 'ZEROKYC_Asset_Repository', 'refresh_if_stale' ) );
 		spl_autoload_register( array( __CLASS__, 'autoload' ) );
 
 		// HPOS / custom order tables compatibility must be declared early.
@@ -109,6 +110,7 @@ final class ZEROKYC_Plugin {
 	 * Activation: create the webhook events and invoice mapping tables.
 	 */
 	public static function activate(): void {
+		ZEROKYC_Asset_Repository::flush();
 		spl_autoload_register( array( __CLASS__, 'autoload' ) );
 		ZEROKYC_Event_Store::create_table();
 		ZEROKYC_Invoice_Map::create_table();

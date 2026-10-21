@@ -30,7 +30,7 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 	 * Payment assets supported by the hosted checkout; `any` lets the buyer
 	 * choose at checkout.
 	 */
-	public const PAYMENT_CURRENCIES = array(
+	public const FALLBACK_PAYMENT_CURRENCIES = array(
 		'any'           => 'Let the buyer choose (USDT, USDC, ETH, BNB, SOL, XRP, NEAR, DOGE, TRX, LTC, BCH, BTC, XMR, TON)',
 		'USDT_TRON'     => 'USDT (TRC-20)',
 		'USDT_BSC'      => 'USDT (BSC, BEP-20)',
@@ -73,6 +73,20 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Settings schema.
 	 */
+	public function process_admin_options() {
+		parent::process_admin_options();
+		// the select may have been rendered from an older catalog: anything
+		// not in the CURRENT list (live fetch first) resets to 'any'
+		$settings = self::settings();
+		$selected     = (string) ( $settings['payment_currency'] ?? 'any' );
+		$valid        = ZEROKYC_Asset_Repository::payment_currencies( true );
+		if ( 'any' !== $selected && ! isset( $valid[ $selected ] ) ) {
+			$settings['payment_currency'] = 'any';
+			update_option( $this->get_option_key(), $settings );
+			ZEROKYC_Logger::warning( sprintf( 'Payment asset "%s" is no longer in the platform catalog; reset to "buyer chooses".', $selected ) );
+		}
+	}
+
 	public function init_form_fields(): void {
 		$this->form_fields = array(
 			'enabled'          => array(
@@ -110,7 +124,7 @@ final class ZEROKYC_Gateway extends WC_Payment_Gateway {
 			'payment_currency' => array(
 				'title'       => __( 'Payment asset', 'zerokyc-pay' ),
 				'type'        => 'select',
-				'options'     => self::PAYMENT_CURRENCIES,
+				'options'     => ZEROKYC_Asset_Repository::payment_currencies(),
 				'default'     => 'any',
 				'description' => __( 'Pin one asset or let the buyer choose at checkout.', 'zerokyc-pay' ),
 				'desc_tip'    => true,
